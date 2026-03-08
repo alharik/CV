@@ -1,0 +1,71 @@
+[package]
+name = "sonic-converter"
+version = "0.1.0"
+edition = "2021"
+authors = ["James Waynn"]
+description = "Production-grade MP3 to WAV converter — zero dependencies, extreme speed"
+license = "MIT"
+repository = "https://github.com/jameswaynn/sonic-converter"
+keywords = ["audio", "mp3", "wav", "converter", "codec"]
+categories = ["multimedia::audio", "encoding"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "sonic-server"
+path = "src/server/main.rs"
+required-features = ["server"]
+
+[features]
+default = ["parallel", "mmap"]
+parallel = ["rayon"]
+mmap = ["memmap2"]
+wasm = ["wasm-bindgen", "js-sys", "web-sys", "console_error_panic_hook"]
+server = ["axum", "tokio", "tower", "tower-http", "serde", "serde_json", "uuid"]
+
+[dependencies]
+# Core: MP3 decoding
+symphonia-core = "0.5"
+symphonia-bundle-mp3 = "0.5"
+symphonia-metadata = "0.5"
+
+# Error handling
+thiserror = "2"
+
+# Optional: parallelism
+rayon = { version = "1.10", optional = true }
+
+# Optional: memory-mapped I/O
+memmap2 = { version = "0.9", optional = true }
+
+# Optional: WASM
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+web-sys = { version = "0.3", optional = true, features = ["console"] }
+console_error_panic_hook = { version = "0.1", optional = true }
+
+# Optional: Server
+axum = { version = "0.8", optional = true, features = ["multipart"] }
+tokio = { version = "1", optional = true, features = ["full"] }
+tower = { version = "0.5", optional = true }
+tower-http = { version = "0.6", optional = true, features = ["cors", "limit"] }
+serde = { version = "1", optional = true, features = ["derive"] }
+serde_json = { version = "1", optional = true }
+uuid = { version = "1", optional = true, features = ["v4"] }
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "conversion"
+harness = false
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.release.package."*"]
+opt-level = 3

@@ -1,7 +1,8 @@
 // ============================================
 // mp3towav.online — App Logic
-// Client-side MP3→WAV via Web Audio API
+// Client-side MP3→WAV via Sonic Converter (Rust/WASM)
 // Zero dependencies. Nothing leaves your device.
+// Powered by symphonia (pure Rust MP3 decoder)
 // ============================================
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
@@ -10,6 +11,8 @@ const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
 let lastBlobUrl = null;
 let lastFileName = null;
 let isProcessing = false;
+let wasmReady = false;
+let wasmModule = null;
 
 // --- DOM ---
 const dropZone = document.getElementById('dropZone');
@@ -28,6 +31,25 @@ const downloadBtn = document.getElementById('downloadBtn');
 const convertAnotherBtn = document.getElementById('convertAnotherBtn');
 const retryBtn = document.getElementById('retryBtn');
 const errorText = document.getElementById('errorText');
+
+// --- Initialize WASM after page load (doesn't block tab spinner) ---
+let wasmInitResolve;
+const wasmInit = new Promise(r => { wasmInitResolve = r; });
+
+window.addEventListener('load', () => {
+    (async () => {
+        try {
+            const mod = await import('./sonic_converter.js');
+            await mod.default();
+            wasmModule = mod;
+            wasmReady = true;
+            console.log(`Sonic Converter v${mod.getVersion()} loaded`);
+        } catch (err) {
+            console.warn('WASM init failed, will use Web Audio API fallback:', err.message);
+        }
+        wasmInitResolve();
+    })();
+});
 
 // --- Panel Switching ---
 function showPanel(panel) {
@@ -116,7 +138,7 @@ function handleFile(file) {
     convertFile(file);
 }
 
-// --- WAV Encoder (PCM 16-bit) ---
+// --- WAV Encoder Fallback (PCM 16-bit) — used if WASM fails ---
 function encodeWAV(audioBuffer) {
     const numChannels = audioBuffer.numberOfChannels;
     const sampleRate = audioBuffer.sampleRate;
@@ -130,33 +152,26 @@ function encodeWAV(audioBuffer) {
     const buffer = new ArrayBuffer(bufferSize);
     const view = new DataView(buffer);
 
-    // Helper: write string
     function writeString(offset, str) {
         for (let i = 0; i < str.length; i++) {
             view.setUint8(offset + i, str.charCodeAt(i));
         }
     }
 
-    // RIFF header
     writeString(0, 'RIFF');
     view.setUint32(4, bufferSize - 8, true);
     writeString(8, 'WAVE');
-
-    // fmt chunk
     writeString(12, 'fmt ');
-    view.setUint32(16, 16, true);              // chunk size
-    view.setUint16(20, 1, true);               // PCM format
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
     view.setUint16(22, numChannels, true);
     view.setUint32(24, sampleRate, true);
-    view.setUint32(28, sampleRate * blockAlign, true); // byte rate
+    view.setUint32(28, sampleRate * blockAlign, true);
     view.setUint16(32, blockAlign, true);
     view.setUint16(34, bitsPerSample, true);
-
-    // data chunk
     writeString(36, 'data');
     view.setUint32(40, dataSize, true);
 
-    // Interleave channels and write PCM samples
     const channels = [];
     for (let ch = 0; ch < numChannels; ch++) {
         channels.push(audioBuffer.getChannelData(ch));
@@ -166,9 +181,7 @@ function encodeWAV(audioBuffer) {
     for (let i = 0; i < numFrames; i++) {
         for (let ch = 0; ch < numChannels; ch++) {
             let sample = channels[ch][i];
-            // Clamp to [-1, 1]
             sample = Math.max(-1, Math.min(1, sample));
-            // Convert to 16-bit integer
             view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
             offset += 2;
         }
@@ -177,37 +190,54 @@ function encodeWAV(audioBuffer) {
     return buffer;
 }
 
-// --- Conversion via Web Audio API ---
+// --- Conversion: Sonic Converter (WASM) with Web Audio API fallback ---
 async function convertFile(file) {
     isProcessing = true;
     dropZone.classList.remove('done', 'error');
 
     try {
-        // Show decoding state
         showPanel(dzConverting);
         convertingFile.textContent = file.name;
         progressFill.style.width = '10%';
-        progressText.textContent = 'Decoding...';
+        progressText.textContent = 'Reading file...';
 
         // Read file as ArrayBuffer
         const arrayBuffer = await file.arrayBuffer();
+        const mp3Bytes = new Uint8Array(arrayBuffer);
 
         progressFill.style.width = '30%';
-        progressText.textContent = 'Processing...';
+        progressText.textContent = 'Decoding MP3...';
 
-        // Decode MP3 to raw PCM using Web Audio API
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-        await audioCtx.close();
+        let wavBuffer;
 
-        progressFill.style.width = '60%';
-        progressText.textContent = 'Encoding WAV...';
+        // Wait for WASM if it's still loading
+        await wasmInit;
 
-        // Encode to WAV
-        const wavBuffer = encodeWAV(audioBuffer);
+        if (wasmReady) {
+            // Primary path: Sonic Converter (Rust/WASM)
+            progressText.textContent = 'Converting (Sonic Engine)...';
+            progressFill.style.width = '50%';
 
-        progressFill.style.width = '90%';
-        progressText.textContent = 'Finalizing...';
+            const wavBytes = wasmModule.convertMp3ToWav(mp3Bytes);
+            wavBuffer = wavBytes.buffer;
+
+            progressFill.style.width = '90%';
+            progressText.textContent = 'Finalizing...';
+        } else {
+            // Fallback: Web Audio API
+            progressText.textContent = 'Converting (Web Audio)...';
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+            await audioCtx.close();
+
+            progressFill.style.width = '60%';
+            progressText.textContent = 'Encoding WAV...';
+
+            wavBuffer = encodeWAV(audioBuffer);
+
+            progressFill.style.width = '90%';
+            progressText.textContent = 'Finalizing...';
+        }
 
         const outputName = file.name.replace(/\.mp3$/i, '.wav');
         const blob = new Blob([wavBuffer], { type: 'audio/wav' });

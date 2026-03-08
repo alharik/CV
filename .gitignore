@@ -1,3 +1,6 @@
 ﻿.claude/
 node_modules/
 .DS_Store
+rustup-init.exe
+sonic-converter/target/
+sonic-converter/pkg/
