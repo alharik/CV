@@ -1,14 +1,12 @@
 // ============================================
 // mp3towav.online — App Logic
-// Client-side MP3→WAV via FFmpeg.wasm
+// Client-side MP3→WAV via Web Audio API
+// Zero dependencies. Nothing leaves your device.
 // ============================================
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
 
 // --- State ---
-let ffmpeg = null;
-let fetchFile = null;
-let ffmpegLoaded = false;
 let lastBlobUrl = null;
 let lastFileName = null;
 let isProcessing = false;
@@ -118,64 +116,109 @@ function handleFile(file) {
     convertFile(file);
 }
 
-// --- FFmpeg Init (lazy) ---
-async function initFFmpeg() {
-    showPanel(dzLoading);
+// --- WAV Encoder (PCM 16-bit) ---
+function encodeWAV(audioBuffer) {
+    const numChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const bitsPerSample = 16;
+    const bytesPerSample = bitsPerSample / 8;
+    const blockAlign = numChannels * bytesPerSample;
+    const numFrames = audioBuffer.length;
+    const dataSize = numFrames * blockAlign;
+    const bufferSize = 44 + dataSize;
 
-    const { FFmpeg } = await import(
-        'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js'
-    );
-    const { fetchFile: ff, toBlobURL } = await import(
-        'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js'
-    );
+    const buffer = new ArrayBuffer(bufferSize);
+    const view = new DataView(buffer);
 
-    fetchFile = ff;
-    ffmpeg = new FFmpeg();
+    // Helper: write string
+    function writeString(offset, str) {
+        for (let i = 0; i < str.length; i++) {
+            view.setUint8(offset + i, str.charCodeAt(i));
+        }
+    }
 
-    ffmpeg.on('progress', ({ progress }) => {
-        const pct = Math.max(0, Math.min(100, Math.round(progress * 100)));
-        progressFill.style.width = pct + '%';
-        progressText.textContent = pct + '%';
-    });
+    // RIFF header
+    writeString(0, 'RIFF');
+    view.setUint32(4, bufferSize - 8, true);
+    writeString(8, 'WAVE');
 
-    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-    await ffmpeg.load({
-        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-    });
+    // fmt chunk
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);              // chunk size
+    view.setUint16(20, 1, true);               // PCM format
+    view.setUint16(22, numChannels, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * blockAlign, true); // byte rate
+    view.setUint16(32, blockAlign, true);
+    view.setUint16(34, bitsPerSample, true);
 
-    ffmpegLoaded = true;
+    // data chunk
+    writeString(36, 'data');
+    view.setUint32(40, dataSize, true);
+
+    // Interleave channels and write PCM samples
+    const channels = [];
+    for (let ch = 0; ch < numChannels; ch++) {
+        channels.push(audioBuffer.getChannelData(ch));
+    }
+
+    let offset = 44;
+    for (let i = 0; i < numFrames; i++) {
+        for (let ch = 0; ch < numChannels; ch++) {
+            let sample = channels[ch][i];
+            // Clamp to [-1, 1]
+            sample = Math.max(-1, Math.min(1, sample));
+            // Convert to 16-bit integer
+            view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+            offset += 2;
+        }
+    }
+
+    return buffer;
 }
 
-// --- Conversion ---
+// --- Conversion via Web Audio API ---
 async function convertFile(file) {
     isProcessing = true;
     dropZone.classList.remove('done', 'error');
 
     try {
-        if (!ffmpegLoaded) {
-            await initFFmpeg();
-        }
-
-        // Switch to converting UI
+        // Show decoding state
         showPanel(dzConverting);
         convertingFile.textContent = file.name;
-        progressFill.style.width = '0%';
-        progressText.textContent = '0%';
+        progressFill.style.width = '10%';
+        progressText.textContent = 'Decoding...';
+
+        // Read file as ArrayBuffer
+        const arrayBuffer = await file.arrayBuffer();
+
+        progressFill.style.width = '30%';
+        progressText.textContent = 'Processing...';
+
+        // Decode MP3 to raw PCM using Web Audio API
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        await audioCtx.close();
+
+        progressFill.style.width = '60%';
+        progressText.textContent = 'Encoding WAV...';
+
+        // Encode to WAV
+        const wavBuffer = encodeWAV(audioBuffer);
+
+        progressFill.style.width = '90%';
+        progressText.textContent = 'Finalizing...';
 
         const outputName = file.name.replace(/\.mp3$/i, '.wav');
-
-        // Write → Convert → Read
-        await ffmpeg.writeFile('input.mp3', await fetchFile(file));
-        await ffmpeg.exec(['-i', 'input.mp3', '-acodec', 'pcm_s16le', 'output.wav']);
-        const data = await ffmpeg.readFile('output.wav');
-
-        const blob = new Blob([data.buffer], { type: 'audio/wav' });
+        const blob = new Blob([wavBuffer], { type: 'audio/wav' });
 
         // Store for re-download
         if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
         lastBlobUrl = URL.createObjectURL(blob);
         lastFileName = outputName;
+
+        progressFill.style.width = '100%';
+        progressText.textContent = '100%';
 
         // Auto-download
         triggerDownload(lastBlobUrl, lastFileName);
@@ -197,12 +240,6 @@ async function convertFile(file) {
                 <span class="file-size">${formatSize(blob.size)}</span>
             </div>
         `;
-
-        // Cleanup virtual FS
-        try {
-            await ffmpeg.deleteFile('input.mp3');
-            await ffmpeg.deleteFile('output.wav');
-        } catch (_) { /* ignore */ }
 
     } catch (err) {
         console.error('Conversion failed:', err);
