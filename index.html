@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 to WAV Converter — Free, Instant &amp; Private | mp3towav.online</title>
+    <meta name="description" content="Convert MP3 to WAV free online in seconds. 100% in your browser — your files never leave your device. No signup, no limits.">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="MP3 to WAV Converter — Free, Instant &amp; Private">
+    <meta property="og:description" content="Convert MP3 to WAV free online in seconds. 100% in your browser — your files never leave your device.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mp3towav.online/">
+    <meta property="og:image" content="https://mp3towav.online/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MP3 to WAV Converter — Free, Instant &amp; Private">
+    <meta name="twitter:description" content="Convert MP3 to WAV free online in seconds. 100% in your browser — your files never leave your device.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://mp3towav.online/">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- WebApplication Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "MP3 to WAV Converter",
+        "url": "https://mp3towav.online",
+        "description": "Convert MP3 to WAV free online in seconds. 100% in your browser — your files never leave your device.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "browserRequirements": "Requires a modern browser with WebAssembly support"
+    }
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                    <rect x="2" y="12" width="4" height="8" rx="1.5" fill="currentColor"/>
+                    <rect x="8" y="6" width="4" height="20" rx="1.5" fill="currentColor"/>
+                    <rect x="14" y="2" width="4" height="28" rx="1.5" fill="currentColor"/>
+                    <rect x="20" y="8" width="4" height="16" rx="1.5" fill="currentColor"/>
+                    <rect x="26" y="11" width="4" height="10" rx="1.5" fill="currentColor"/>
+                </svg>
+                <span class="logo-text">mp3towav<span class="logo-dot">.online</span></span>
+            </div>
+            <h1 class="tagline">Free MP3 to WAV Converter — Instant, Private, No Upload</h1>
+        </div>
+    </header>
+
+    <main>
+        <section class="converter">
+            <div class="container">
+                <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Drop MP3 file here or click to browse">
+                    <!-- Idle State -->
+                    <div class="drop-zone-idle" id="dzIdle">
+                        <div class="waveform" id="waveform">
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                            <span class="bar"></span>
+                        </div>
+                        <p class="drop-text">Drop your MP3 here</p>
+                        <p class="drop-subtext">or <button type="button" id="browseBtn" class="browse-link">browse files</button></p>
+                        <p class="drop-limit">MP3 files up to 100 MB</p>
+                    </div>
+
+                    <!-- Loading FFmpeg State -->
+                    <div class="drop-zone-loading hidden" id="dzLoading">
+                        <div class="spinner"></div>
+                        <p class="loading-text">Initializing converter<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></p>
+                        <p class="loading-subtext">Loading audio engine (first time only)</p>
+                    </div>
+
+                    <!-- Converting State -->
+                    <div class="drop-zone-converting hidden" id="dzConverting">
+                        <p class="converting-file" id="convertingFile"></p>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <p class="progress-text" id="progressText">0%</p>
+                    </div>
+
+                    <!-- Done State -->
+                    <div class="drop-zone-done hidden" id="dzDone">
+                        <div class="done-icon" aria-hidden="true">&#10003;</div>
+                        <p class="done-text">Conversion complete</p>
+                        <div class="file-comparison" id="fileComparison"></div>
+                        <button type="button" class="btn-primary" id="downloadBtn">Download WAV</button>
+                        <button type="button" class="btn-secondary" id="convertAnotherBtn">Convert another file</button>
+                    </div>
+
+                    <!-- Error State -->
+                    <div class="drop-zone-error hidden" id="dzError">
+                        <div class="error-icon" aria-hidden="true">!</div>
+                        <p class="error-text" id="errorText"></p>
+                        <button type="button" class="btn-secondary" id="retryBtn">Try again</button>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept=".mp3,audio/mpeg" hidden>
+                <p class="trust-line">Your files never leave your device &middot; Powered by FFmpeg &middot; No signup or limits</p>
+            </div>
+        </section>
+
+        <!-- AdSense slot -->
+        <div class="ad-slot" id="ad-below-converter"></div>
+
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                        </div>
+                        <h3>100% Private</h3>
+                        <p>Your files never leave your device. All processing happens in your browser.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                            </svg>
+                        </div>
+                        <h3>Instant</h3>
+                        <p>Powered by FFmpeg. Professional-grade conversion in seconds.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/>
+                                <path d="M2 12h20"/>
+                                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/>
+                            </svg>
+                        </div>
+                        <h3>No Limits</h3>
+                        <p>No signup. No watermarks. No daily caps. Convert as many files as you want.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AdSense slot -->
+        <div class="ad-slot" id="ad-above-faq"></div>
+
+        <section class="faq" id="faq">
+            <div class="container">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-list">
+                    <details class="faq-item">
+                        <summary>Is this MP3 to WAV converter free?</summary>
+                        <p>Yes, completely free. There are no hidden costs, subscriptions, or premium tiers. Convert as many files as you want at no charge.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Is my file safe? Does it get uploaded to a server?</summary>
+                        <p>Your file never leaves your device. The entire conversion happens locally in your browser using WebAssembly technology. We have zero access to your files — there is no server upload involved at all.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Why convert MP3 to WAV?</summary>
+                        <p>WAV is an uncompressed audio format preferred by audio professionals. It's the standard for music production, audio editing, broadcasting, and mastering. Converting to WAV ensures no quality loss during editing workflows.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Is there a file size limit?</summary>
+                        <p>Files up to 100 MB are supported. Since processing happens in your browser, larger files may take slightly longer depending on your device's performance.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>How long does conversion take?</summary>
+                        <p>Most files convert in just a few seconds. A typical 5-minute MP3 converts in under 3 seconds on modern hardware. You'll see real-time progress during conversion.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary>Does it work on mobile?</summary>
+                        <p>Yes. The converter works on any modern browser including Chrome, Firefox, Safari, and Edge on both desktop and mobile devices.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <nav class="footer-nav">
+                <a href="/">Converter</a>
+                <a href="/blog/">Blog</a>
+                <a href="/faq/">FAQ</a>
+                <a href="/blog/wav-vs-mp3-music-production/">WAV vs MP3</a>
+                <a href="/blog/privacy-in-audio-conversion/">Privacy</a>
+            </nav>
+            <p>mp3towav.online — Free MP3 to WAV converter. Your files stay on your device.</p>
+        </div>
+    </footer>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "Is this MP3 to WAV converter free?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, completely free. There are no hidden costs, subscriptions, or premium tiers. Convert as many files as you want at no charge."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is my file safe? Does it get uploaded to a server?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Your file never leaves your device. The entire conversion happens locally in your browser using WebAssembly technology. We have zero access to your files."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Why convert MP3 to WAV?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "WAV is an uncompressed audio format preferred by audio professionals for music production, audio editing, broadcasting, and mastering."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is there a file size limit?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Files up to 100 MB are supported. Since processing happens in your browser, larger files may take slightly longer depending on your device."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How long does conversion take?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Most files convert in just a few seconds. A typical 5-minute MP3 converts in under 3 seconds on modern hardware."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Does it work on mobile?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. The converter works on any modern browser including Chrome, Firefox, Safari, and Edge on both desktop and mobile devices."
+                }
+            }
+        ]
+    }
+    </script>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
