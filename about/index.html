@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About mp3towav.online — Free, Private MP3 to WAV Converter</title>
+    <meta name="description" content="mp3towav.online was built by a developer who was tired of ad-heavy, privacy-invasive audio converters. Learn why we built a browser-based converter powered by Rust and WebAssembly.">
+    <meta property="og:title" content="About mp3towav.online">
+    <meta property="og:description" content="Built by a developer who was tired of ad-heavy, privacy-invasive audio converters.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mp3towav.online/about/">
+    <meta property="og:image" content="https://mp3towav.online/og-image.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="https://mp3towav.online/og-image.png">
+    <link rel="canonical" href="https://mp3towav.online/about/">
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet" crossorigin>
+    <link rel="stylesheet" href="/content.css">
+
+    <!-- Plausible Analytics -->
+    <script defer data-domain="mp3towav.online" src="https://plausible.io/js/script.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="site-nav">
+            <a href="/" class="nav-logo">mp3towav<span>.online</span></a>
+            <div class="nav-links">
+                <a href="/">Converter</a>
+                <a href="/blog/">Blog</a>
+                <a href="/faq/">FAQ</a>
+                <a href="/about/" class="active">About</a>
+                <a href="/api/">API</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="article">
+            <div class="container">
+                <h1>About mp3towav.online</h1>
+
+                <h2>The Problem</h2>
+                <p>Every online audio converter I tried was the same story: upload your files to some unknown server, sit through ads, create an account, hit a daily limit. For something as simple as converting MP3 to WAV, this felt absurd.</p>
+                <p>Worse, most of these tools require you to trust a stranger with your audio files. Unreleased music, confidential podcast recordings, private voice memos — all passing through someone else's servers with no real guarantee of what happens to them afterward.</p>
+
+                <h2>The Solution</h2>
+                <p>I built mp3towav.online to do one thing well: convert MP3 files to WAV instantly, entirely in your browser. No uploads. No ads. No signups. No limits.</p>
+                <p>Your files never leave your device — that's not a marketing promise, it's how the technology works. The conversion engine runs in your browser's memory using WebAssembly. There is no server to upload to, no backend processing, and no temporary storage. When you close the tab, it's gone.</p>
+
+                <h2>How It Works</h2>
+                <p>Under the hood, mp3towav.online runs <strong>Sonic Converter</strong> — a custom audio engine written in Rust and compiled to WebAssembly. It uses the <strong>Symphonia</strong> library to decode MP3 audio and produces standard PCM WAV output.</p>
+                <p>The entire process happens in your browser's memory:</p>
+                <ul>
+                    <li>You drop an MP3 file onto the converter</li>
+                    <li>Sonic Converter decodes the compressed audio data</li>
+                    <li>Raw PCM samples are written into a WAV container</li>
+                    <li>You download the WAV file directly from your browser</li>
+                </ul>
+                <p>A typical 5-minute MP3 converts in under 3 seconds on modern hardware. If WebAssembly isn't supported, the converter falls back to the Web Audio API — so it works everywhere.</p>
+
+                <h2>Why Privacy Matters</h2>
+                <p>When you upload a file to a traditional online converter, you're trusting that service with your data. Even if they promise to delete files after conversion, you have no way to verify that. Server logs, backups, caching layers — your audio could persist in ways you never intended.</p>
+                <p>With browser-based conversion, that risk doesn't exist. Your files literally cannot be intercepted because they never leave your device. Privacy isn't a policy we wrote — it's the architecture we chose.</p>
+
+                <h2>For Developers</h2>
+                <p>Need programmatic conversion? The <a href="/api/">Sonic Converter API</a> offers the same engine as a REST service with tiered plans from free (500 conversions/month) to unlimited. It's built for developers and businesses who need reliable MP3 to WAV conversion at scale.</p>
+
+                <h2>Get in Touch</h2>
+                <p>Questions, feedback, or feature requests? Reach out at <a href="mailto:hello@mp3towav.online">hello@mp3towav.online</a>.</p>
+
+                <div class="cta-box">
+                    <h3>Try mp3towav</h3>
+                    <p>Free, instant, and completely private — your files never leave your device.</p>
+                    <a href="/" class="cta-btn">Convert MP3 to WAV</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/">MP3 to WAV Converter</a>
+                <a href="/blog/">Blog</a>
+                <a href="/faq/">FAQ</a>
+                <a href="/api/">API</a>
+                <a href="/privacy/">Privacy</a>
+                <a href="/terms/">Terms</a>
+            </div>
+            <p>&copy; 2026 mp3towav.online — Free, private MP3 to WAV conversion.</p>
+        </div>
+    </footer>
+</body>
+</html>

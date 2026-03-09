@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script defer data-domain="mp3towav.online" src="https://plausible.io/js/script.js"></script>
+
+  <!-- ============================================================
+       SEO META — Replace all FreeConvert and freeconvert
+       ============================================================ -->
+  <title>Best FreeConvert Alternative — Free MP3 to WAV Converter (No Upload)</title>
+  <meta name="description" content="Looking for a FreeConvert alternative? Convert MP3 to WAV instantly in your browser — no uploads, no signups, no file limits. 100% private and free.">
+  <meta name="keywords" content="freeconvert alternative, MP3 to WAV converter, free audio converter, private audio conversion, browser audio converter, no upload converter">
+  <link rel="canonical" href="https://mp3towav.online/alternatives/freeconvert/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Best FreeConvert Alternative — Free, Private MP3 to WAV Converter">
+  <meta property="og:description" content="Ditch FreeConvert. Convert audio files instantly in your browser with zero uploads, zero limits, and total privacy.">
+  <meta property="og:url" content="https://mp3towav.online/alternatives/freeconvert/">
+  <meta property="og:image" content="https://mp3towav.online/og-image.png">
+  <meta property="og:site_name" content="mp3towav.online">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Best FreeConvert Alternative — Free, Private Audio Converter">
+  <meta name="twitter:description" content="Convert MP3 to WAV in your browser. No uploads. No limits. No FreeConvert required.">
+  <meta name="twitter:image" content="https://mp3towav.online/og-image.png">
+
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50:  '#fff7ed',
+              100: '#ffedd5',
+              200: '#fed7aa',
+              300: '#fdba74',
+              400: '#fb923c',
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+              800: '#9a3412',
+              900: '#7c2d12',
+              950: '#431407',
+            },
+            surface: {
+              50:  '#fafafa',
+              100: '#f5f5f5',
+              200: '#e5e5e5',
+              700: '#1a1a1a',
+              800: '#141414',
+              900: '#0e0e0e',
+              950: '#0a0a0a',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Inter font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Smooth scroll ── */
+    html { scroll-behavior: smooth; }
+
+    /* ── Gradient text utility ── */
+    .gradient-text {
+      background: linear-gradient(135deg, #fb923c 0%, #f97316 40%, #fdba74 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── Hero glow ── */
+    .hero-glow {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.1;
+      pointer-events: none;
+    }
+
+    /* ── Comparison card hover ── */
+    .compare-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .compare-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    /* ── FAQ accordion ── */
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 500px;
+      padding-top: 1rem;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+    .faq-chevron {
+      transition: transform 0.3s ease;
+    }
+
+    /* ── Pulse badge ── */
+    @keyframes pulse-ring {
+      0%   { transform: scale(1);   opacity: 0.5; }
+      100% { transform: scale(1.8); opacity: 0; }
+    }
+    .pulse-dot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #f97316;
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    /* ── Strikethrough competitor price ── */
+    .competitor-price {
+      position: relative;
+      color: #94a3b8;
+    }
+    .competitor-price::after {
+      content: '';
+      position: absolute;
+      left: -2px;
+      right: -2px;
+      top: 50%;
+      height: 2px;
+      background: #ef4444;
+      transform: rotate(-8deg);
+    }
+  </style>
+
+  <!-- ── FAQ Schema (JSON-LD) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is mp3towav.online a good alternative to FreeConvert?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. mp3towav.online converts audio files entirely inside your browser using Sonic Converter. Unlike FreeConvert, your files never leave your device, making it faster, more private, and completely free with no limits."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does mp3towav.online upload my files to a server?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Every conversion happens locally in your browser. Your audio files are never uploaded, transmitted, or stored on any server. This is what makes it fundamentally different from cloud-based tools like FreeConvert."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is mp3towav.online really free with no file size limits?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Because the conversion runs on your own device, there are no server costs to offset. There are no file size limits, no daily conversion caps, no watermarks, and no signup required."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What audio formats does mp3towav.online support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "mp3towav.online converts MP3 files to uncompressed WAV format, which is the standard for music production, podcast editing, and professional audio workflows."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use mp3towav.online offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Once the page is loaded, the conversion engine runs entirely in your browser. No active internet connection is needed during the actual conversion process."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- ── Software Application Schema ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "mp3towav.online",
+    "applicationCategory": "MultimediaApplication",
+    "operatingSystem": "Any (Browser-based)",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "description": "Free browser-based MP3 to WAV converter. No uploads, no limits, 100% private.",
+    "url": "https://mp3towav.online"
+  }
+  </script>
+</head>
+
+<body class="bg-surface-950 text-white font-sans antialiased">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       NAVIGATION
+       ═══════════════════════════════════════════════════════════ -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-surface-950/80 backdrop-blur-xl border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 group">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/>
+          </svg>
+        </div>
+        <span class="text-lg font-bold tracking-tight">mp3towav<span class="text-brand-400">.online</span></span>
+      </a>
+
+      <!-- Nav Links -->
+      <div class="hidden sm:flex items-center gap-6">
+        <a href="/" class="text-sm text-slate-400 hover:text-white transition-colors">Home</a>
+        <a href="/blog/" class="text-sm text-slate-400 hover:text-white transition-colors">Blog</a>
+        <a href="/faq/" class="text-sm text-slate-400 hover:text-white transition-colors">FAQ</a>
+        <a href="/about/" class="text-sm text-slate-400 hover:text-white transition-colors">About</a>
+      </div>
+
+      <!-- CTA -->
+      <a href="/#converter" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold transition-colors">
+        Convert Now — Free
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+        </svg>
+      </a>
+    </div>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO SECTION
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden">
+    <!-- Background glows -->
+    <div class="hero-glow bg-orange-500 top-0 left-1/4 -translate-x-1/2"></div>
+    <div class="hero-glow bg-amber-600 bottom-0 right-1/4 translate-x-1/2"></div>
+
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
+      <!-- Trust badge -->
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-sm text-slate-300 mb-8">
+        <span class="relative flex h-2 w-2">
+          <span class="pulse-dot relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+        </span>
+        Trusted by 50,000+ creators — No signup required
+      </div>
+
+      <!-- H1 -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+        The <span class="gradient-text">FreeConvert</span> Alternative<br class="hidden sm:block"> That Never Touches Your Files
+      </h1>
+
+      <!-- Sub-headline -->
+      <p class="max-w-2xl mx-auto text-lg sm:text-xl text-slate-400 leading-relaxed mb-10">
+        Stop uploading your audio to someone else's server. <strong class="text-slate-200">mp3towav.online</strong> converts files
+        <em>inside your browser</em> — instantly, privately, and with zero limits. No account. No cost. Ever.
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="/#converter" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-lg transition-all hover:shadow-lg hover:shadow-brand-600/25">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          Convert MP3 to WAV — Free
+        </a>
+        <a href="#how-it-works" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-semibold text-lg transition-all">
+          See How It Works
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Social proof micro-stats -->
+      <div class="mt-14 flex flex-wrap items-center justify-center gap-8 sm:gap-12 text-sm text-slate-500">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>No file uploads</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>No size limits</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>100% free</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+          <span>Works offline</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       PROBLEM STATEMENT — "Why switch?"
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-16 sm:py-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="rounded-3xl bg-gradient-to-br from-red-950/40 to-surface-900 border border-red-900/30 p-8 sm:p-12">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-6">
+          The problem with <span class="text-red-400">FreeConvert</span>
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="flex gap-3">
+            <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div>
+              <p class="font-semibold text-slate-200">Your files hit their servers</p>
+              <p class="text-sm text-slate-400 mt-1">FreeConvert uploads your audio to remote servers for processing. You lose control of your data the moment you click "Convert."</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div>
+              <p class="font-semibold text-slate-200">Slow upload → wait → download cycle</p>
+              <p class="text-sm text-slate-400 mt-1">Upload, wait in a queue, then download. A 50MB file can take minutes on a slow connection — for a conversion that should be instant.</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div>
+              <p class="font-semibold text-slate-200">Hidden limits and upsells</p>
+              <p class="text-sm text-slate-400 mt-1">"Free" until you hit the file size cap, daily limit, or get throttled into a <span class="competitor-price inline-block">$9.99/mo</span> subscription.</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div>
+              <p class="font-semibold text-slate-200">Requires signup and email</p>
+              <p class="text-sm text-slate-400 mt-1">Account creation, email verification, marketing spam — just to convert one audio file.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPARISON TABLE
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-16 sm:py-24" id="compare">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-14">
+        <p class="text-brand-400 font-semibold text-sm tracking-widest uppercase mb-3">Head-to-Head</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          mp3towav.online vs <span class="gradient-text">FreeConvert</span>
+        </h2>
+        <p class="text-slate-400 mt-4 max-w-xl mx-auto">
+          See why local, browser-based conversion beats the cloud — in every category that matters.
+        </p>
+      </div>
+
+      <!-- Comparison Grid -->
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Competitor Card -->
+        <div class="compare-card rounded-2xl bg-surface-900 border border-white/5 p-8">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-red-500/10 flex items-center justify-center">
+              <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-200">FreeConvert</h3>
+              <p class="text-xs text-red-400 font-medium">Cloud-Based</p>
+            </div>
+          </div>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">Privacy:</strong> Files uploaded to external servers</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">Speed:</strong> Upload + queue + download latency</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">File limit:</strong> 1 GB cap on free tier</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">Cost:</strong> Free tier limited, paid plans from <span class="competitor-price">$9.99/mo</span></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">Offline:</strong> Requires internet connection</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-red-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              <span class="text-sm text-slate-400"><strong class="text-slate-300">Account:</strong> Signup required</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Our Card -->
+        <div class="compare-card rounded-2xl bg-gradient-to-br from-brand-950/40 to-surface-900 border border-brand-500/30 p-8 ring-1 ring-brand-500/10">
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-brand-500/15 flex items-center justify-center">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-white">mp3towav.online</h3>
+              <p class="text-xs text-brand-400 font-medium">100% Browser-Based</p>
+            </div>
+          </div>
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">Privacy:</strong> Files never leave your device</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">Speed:</strong> Instant — no network latency</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">File limit:</strong> None — unlimited file size</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">Cost:</strong> Free forever — no hidden tiers</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">Offline:</strong> Works after page load</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-5 h-5 mt-0.5 text-orange-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="text-sm text-slate-300"><strong class="text-white">Account:</strong> No signup, no email, no BS</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HOW IT WORKS
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-16 sm:py-24 bg-surface-900/50" id="how-it-works">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-16">
+        <p class="text-brand-400 font-semibold text-sm tracking-widest uppercase mb-3">Simple & Instant</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">How It Works</h2>
+        <p class="text-slate-400 mt-4 max-w-xl mx-auto">
+          Three steps. Zero uploads. Your file stays on your device the entire time.
+        </p>
+      </div>
+
+      <!-- Steps -->
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Step 1 -->
+        <div class="relative text-center">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+            <span class="text-2xl font-black text-brand-400">1</span>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Drop Your MP3</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Drag and drop your file — or click to browse. It loads directly into your browser's memory. Nothing is sent anywhere.
+          </p>
+          <!-- Connector arrow (hidden on mobile) -->
+          <div class="hidden md:block absolute top-8 -right-4 w-8">
+            <svg class="w-full text-slate-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative text-center">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+            <span class="text-2xl font-black text-brand-400">2</span>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Instant Conversion</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Sonic Converter decodes your MP3 natively in the browser and re-encodes it as an uncompressed WAV — at full quality, in seconds.
+          </p>
+          <!-- Connector arrow -->
+          <div class="hidden md:block absolute top-8 -right-4 w-8">
+            <svg class="w-full text-slate-700" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center">
+            <span class="text-2xl font-black text-brand-400">3</span>
+          </div>
+          <h3 class="text-xl font-bold mb-3">Download Your WAV</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            Your converted file is ready to download instantly. Import it straight into your DAW, podcast editor, or any audio workflow.
+          </p>
+        </div>
+      </div>
+
+      <!-- Tech badge -->
+      <div class="mt-14 text-center">
+        <div class="inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-surface-900 border border-white/5">
+          <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <span class="text-sm text-slate-300">
+            Powered by <strong class="text-white">Sonic Converter</strong> — a high-performance browser-based audio engine. No plugins, no installs, no dependencies.
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BENEFITS GRID
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-16 sm:py-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-14">
+        <p class="text-brand-400 font-semibold text-sm tracking-widest uppercase mb-3">Why Creators Switch</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          Built for people who care about their audio
+        </h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Total Privacy</h3>
+          <p class="text-sm text-slate-400">Your audio files never leave your device. Zero server uploads. Zero data collection. Not even analytics on your files.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Lightning Fast</h3>
+          <p class="text-sm text-slate-400">No upload, no queue, no server latency. Conversion happens on your hardware at native speed. A 10MB file converts in under 2 seconds.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Works Offline</h3>
+          <p class="text-sm text-slate-400">Once the page is loaded, the converter works with no internet. Perfect for field recording sessions, flights, or unreliable connections.</p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">DAW-Ready Output</h3>
+          <p class="text-sm text-slate-400">Output is standard uncompressed WAV — ready to drop into Ableton, Logic Pro, FL Studio, Pro Tools, Audacity, or any professional DAW.</p>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Truly Free</h3>
+          <p class="text-sm text-slate-400">No subscriptions. No "premium" tier. No watermarks. No daily limits. Free means free — today, tomorrow, always.</p>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="rounded-2xl bg-surface-900 border border-white/5 p-6 hover:border-brand-500/20 transition-colors">
+          <div class="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-bold mb-2">Any Device</h3>
+          <p class="text-sm text-slate-400">Works in any modern browser — Chrome, Safari, Firefox, Edge. Desktop, tablet, or phone. No software to install.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FAQ SECTION
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-16 sm:py-24 bg-surface-900/50" id="faq">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-14">
+        <p class="text-brand-400 font-semibold text-sm tracking-widest uppercase mb-3">FAQ</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-slate-400 mt-4">
+          Everything you need to know about switching from FreeConvert.
+        </p>
+      </div>
+
+      <div class="space-y-3" id="faq-list">
+        <!-- FAQ 1 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">Is mp3towav.online really a good alternative to FreeConvert?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Yes. If your goal is converting MP3 files to WAV, mp3towav.online does the same job as FreeConvert — but faster, more privately, and without any limitations. Because the conversion happens locally in your browser using Sonic Converter, there's no upload delay, no file size restriction, and your audio never touches a third-party server.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">Does mp3towav.online upload my files to a server?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              No — and this is the core difference. Every conversion happens 100% locally in your browser. Your audio files are never uploaded, transmitted, or stored on any server. This makes mp3towav.online fundamentally more private than cloud-based converters like FreeConvert, which require uploading your files for server-side processing.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">Is it really free? What's the catch?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              There's no catch. Because the conversion happens on your device, there are no server costs to pay for. That means no file size limits, no daily conversion caps, no watermarks, and no "premium" tier. You don't even need to create an account. It's free today and it will stay free.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">What audio quality does the WAV output have?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              The output is standard uncompressed WAV (PCM, 16-bit or 32-bit float depending on your source). This is the same format accepted by every professional DAW — Ableton Live, Logic Pro, FL Studio, Pro Tools, Audacity, and more. The quality is identical to what you'd get from any professional conversion tool.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 5 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">Can I use mp3towav.online offline?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Once the page is loaded in your browser, the conversion engine runs entirely on your device. No active internet connection is needed during the actual conversion. This makes it perfect for studio sessions, remote locations, or anywhere with limited connectivity — something that's impossible with cloud-based tools like FreeConvert.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 6 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">What browsers and devices are supported?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              mp3towav.online works in any modern browser — including Chrome, Firefox, Safari, and Edge. It runs on desktop, laptop, tablet, and mobile. There's nothing to download or install.
+            </p>
+          </div>
+        </div>
+
+        <!-- FAQ 7 -->
+        <div class="faq-item rounded-2xl bg-surface-900 border border-white/5">
+          <button class="w-full flex items-center justify-between gap-4 p-6 text-left" onclick="this.closest('.faq-item').classList.toggle('open')">
+            <h3 class="font-semibold text-slate-200 pr-4">Is this safe to use for confidential or unreleased audio?</h3>
+            <svg class="faq-chevron w-5 h-5 text-slate-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-answer px-6 pb-6">
+            <p class="text-sm text-slate-400 leading-relaxed">
+              Absolutely. Since your files are processed entirely in your browser and never uploaded anywhere, mp3towav.online is one of the safest ways to convert audio online. Artists, labels, podcasters, and journalists use it specifically because there's zero risk of data leaks. Your unreleased tracks stay unreleased.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FINAL CTA
+       ═══════════════════════════════════════════════════════════ -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+      <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-5">
+        Ready to ditch <span class="gradient-text">FreeConvert</span>?
+      </h2>
+      <p class="text-lg text-slate-400 mb-10 max-w-xl mx-auto">
+        Convert your first file in under 5 seconds. No signup, no upload, no limits.
+        Just drag, drop, and done.
+      </p>
+      <a href="/#converter" class="inline-flex items-center gap-2 px-10 py-5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-lg transition-all hover:shadow-xl hover:shadow-brand-600/20">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Start Converting — It's Free
+      </a>
+      <p class="mt-5 text-sm text-slate-500">No account required. Works in any browser.</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ -->
+  <footer class="border-t border-white/5 py-10">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-md bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-slate-400">mp3towav<span class="text-brand-400">.online</span></span>
+        </div>
+        <nav class="flex items-center gap-6 text-sm text-slate-500">
+          <a href="/" class="hover:text-slate-300 transition-colors">Converter</a>
+          <a href="/blog/" class="hover:text-slate-300 transition-colors">Blog</a>
+          <a href="/faq/" class="hover:text-slate-300 transition-colors">FAQ</a>
+          <a href="/about/" class="hover:text-slate-300 transition-colors">About</a>
+          <a href="/api/" class="hover:text-slate-300 transition-colors">API</a>
+          <a href="/privacy/" class="hover:text-slate-300 transition-colors">Privacy</a>
+          <a href="/terms/" class="hover:text-slate-300 transition-colors">Terms</a>
+        </nav>
+        <p class="text-xs text-slate-600">&copy; 2026 mp3towav.online — Free, private MP3 to WAV conversion.</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
