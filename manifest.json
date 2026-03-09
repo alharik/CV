@@ -1,0 +1,22 @@
+{
+    "name": "mp3towav — Free MP3 to WAV Converter",
+    "short_name": "mp3towav",
+    "description": "Convert MP3 to WAV instantly in your browser. Files never leave your device.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#09090b",
+    "theme_color": "#09090b",
+    "icons": [
+        {
+            "src": "/apple-touch-icon.png",
+            "sizes": "180x180",
+            "type": "image/png"
+        },
+        {
+            "src": "/og-image.png",
+            "sizes": "1200x630",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ]
+}
