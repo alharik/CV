@@ -535,9 +535,18 @@ async function handleBatch(files) {
     if (successCount > 0) {
         trackEvent('Conversion', { type: 'batch', bitDepth: String(wasmReady ? selectedBitDepth : 16), fileCount: String(successCount) });
         updateConversionCounter(successCount);
-        batchResults.filter(function(r) { return !r.error; }).forEach(function(r) {
-            addToHistory({ input: r.file.name, output: r.outputName, size: r.size, bitDepth: wasmReady ? selectedBitDepth : 16, date: new Date().toISOString() });
+        var histEntries = batchResults.filter(function(r) { return !r.error; }).map(function(r) {
+            return { input: r.file.name, output: r.outputName, size: r.size, bitDepth: wasmReady ? selectedBitDepth : 16, date: new Date().toISOString() };
         });
+        if (histEntries.length > 0) {
+            try {
+                var history = JSON.parse(localStorage.getItem('mp3towav_history') || '[]');
+                if (!Array.isArray(history)) history = [];
+                history = histEntries.concat(history).slice(0, 10);
+                localStorage.setItem('mp3towav_history', JSON.stringify(history));
+            } catch (e) {}
+            renderHistory();
+        }
     }
 }
 
@@ -674,7 +683,7 @@ function renderHistory() {
     historyList.innerHTML = history.map(function(h) {
         return '<div class="history-item">' +
             '<span class="history-item-name">' + escapeHtml(h.input) + '</span>' +
-            '<span class="history-item-meta">' + formatSize(h.size) + ' \u00b7 ' + h.bitDepth + '-bit \u00b7 ' + timeAgo(h.date) + '</span>' +
+            '<span class="history-item-meta">' + formatSize(h.size) + ' \u00b7 ' + Number(h.bitDepth) + '-bit \u00b7 ' + timeAgo(h.date) + '</span>' +
             '</div>';
     }).join('') + '<button class="history-clear" id="historyClear">Clear history</button>';
 
@@ -683,7 +692,6 @@ function renderHistory() {
         clearBtn.addEventListener('click', function() {
             try { localStorage.removeItem('mp3towav_history'); } catch (e) {}
             historyList.innerHTML = '';
-            historyList.classList.add('hidden');
             historySection.classList.add('hidden');
             historyToggle.setAttribute('aria-expanded', 'false');
         });
