@@ -544,6 +544,46 @@ main {
     border-left: 1px solid var(--border);
 }
 
+/* ---- Audio Preview Button ---- */
+.done-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+}
+
+.done-buttons .btn-primary {
+    margin-bottom: 0;
+}
+
+.btn-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.btn-preview:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-glow);
+}
+
+.btn-preview.playing {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 /* ---- Batch Queue ---- */
 .batch-title {
     font-size: 1.1rem;

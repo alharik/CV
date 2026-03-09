@@ -16,6 +16,7 @@ let wasmModule = null;
 let selectedBitDepth = 16;
 let batchResults = []; // { file, blobUrl, outputName, size, error }
 let batchAudio = null; // currently playing audio in batch mode
+let previewAudio = null;
 
 // --- DOM ---
 const dropZone = document.getElementById('dropZone');
@@ -41,6 +42,7 @@ const batchQueue = document.getElementById('batchQueue');
 const batchActions = document.getElementById('batchActions');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
 const batchResetBtn = document.getElementById('batchResetBtn');
+const previewBtn = document.getElementById('previewBtn');
 
 // --- Initialize WASM after page load (doesn't block tab spinner) ---
 let wasmInitResolve;
@@ -208,6 +210,29 @@ batchResetBtn.addEventListener('click', (e) => {
         batchAudio = null;
     }
     reset();
+});
+
+// --- Audio Preview ---
+previewBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (previewAudio && !previewAudio.paused) {
+        previewAudio.pause();
+        previewAudio.currentTime = 0;
+        previewBtn.innerHTML = '&#9654; Preview';
+        previewBtn.classList.remove('playing');
+        previewAudio = null;
+        return;
+    }
+    if (!lastBlobUrl) return;
+    previewAudio = new Audio(lastBlobUrl);
+    previewAudio.play();
+    previewBtn.innerHTML = '&#9646;&#9646; Stop';
+    previewBtn.classList.add('playing');
+    previewAudio.addEventListener('ended', () => {
+        previewBtn.innerHTML = '&#9654; Preview';
+        previewBtn.classList.remove('playing');
+        previewAudio = null;
+    });
 });
 
 // --- Prevent default drag on page ---
@@ -536,6 +561,10 @@ function reset() {
     if (batchAudio) {
         batchAudio.pause();
         batchAudio = null;
+    }
+    if (previewAudio) {
+        previewAudio.pause();
+        previewAudio = null;
     }
     lastFileName = null;
     fileInput.value = '';
