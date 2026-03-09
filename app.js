@@ -211,6 +211,8 @@ async function convertFile(file) {
     dropZone.classList.remove('done', 'error');
 
     try {
+        let actualBitDepth = selectedBitDepth;
+
         showPanel(dzConverting);
         convertingFile.textContent = file.name;
         progressFill.style.width = '10%';
@@ -240,6 +242,7 @@ async function convertFile(file) {
             progressText.textContent = 'Finalizing...';
         } else {
             // Fallback: Web Audio API
+            actualBitDepth = 16;
             if (selectedBitDepth !== 16) {
                 console.warn('Web Audio fallback only supports 16-bit. Using 16-bit output.');
             }
@@ -282,9 +285,13 @@ async function convertFile(file) {
             <div class="file-info">
                 <span class="file-label">Output</span>
                 <span class="file-name">${escapeHtml(outputName)}</span>
-                <span class="file-size">${formatSize(blob.size)} · ${selectedBitDepth}-bit</span>
+                <span class="file-size">${formatSize(blob.size)} · ${actualBitDepth}-bit</span>
             </div>
         `;
+
+        if (actualBitDepth !== selectedBitDepth) {
+            fileComparison.innerHTML += '<p class="fallback-note">Note: ' + selectedBitDepth + '-bit requires the Sonic engine. Converted at 16-bit.</p>';
+        }
 
     } catch (err) {
         console.error('Conversion failed:', err);
