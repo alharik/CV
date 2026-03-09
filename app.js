@@ -225,7 +225,11 @@ previewBtn.addEventListener('click', (e) => {
     }
     if (!lastBlobUrl) return;
     previewAudio = new Audio(lastBlobUrl);
-    previewAudio.play();
+    previewAudio.play().catch(() => {
+        previewBtn.innerHTML = '&#9654; Preview';
+        previewBtn.classList.remove('playing');
+        previewAudio = null;
+    });
     previewBtn.innerHTML = '&#9646;&#9646; Stop';
     previewBtn.classList.add('playing');
     previewAudio.addEventListener('ended', () => {
@@ -522,7 +526,10 @@ function toggleBatchAudio(blobUrl, btn) {
 
     batchAudio = new Audio(blobUrl);
     batchAudio._blobUrl = blobUrl;
-    batchAudio.play();
+    batchAudio.play().catch(() => {
+        btn.innerHTML = '&#9654;';
+        batchAudio = null;
+    });
     btn.innerHTML = '&#9646;&#9646;';
     batchAudio.addEventListener('ended', () => {
         btn.innerHTML = '&#9654;';
