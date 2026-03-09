@@ -145,7 +145,8 @@
     <header>
         <nav class="site-nav">
             <a href="/" class="nav-logo">mp3towav<span>.online</span></a>
-            <div class="nav-links">
+            <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-label="Toggle navigation">&#9776;</button>
+            <div class="nav-links" id="navLinks">
                 <a href="/" class="active">Converter</a>
                 <a href="/blog/">Blog</a>
                 <a href="/faq/">FAQ</a>
@@ -405,6 +406,25 @@
             navigator.serviceWorker.register('/sw.js').catch(() => {});
         });
     }
+    </script>
+    <script>
+    (function() {
+        const toggle = document.getElementById('navToggle');
+        const nav = document.querySelector('.site-nav');
+        if (!toggle || !nav) return;
+        toggle.addEventListener('click', function() {
+            const open = nav.classList.toggle('nav-open');
+            toggle.setAttribute('aria-expanded', String(open));
+            toggle.innerHTML = open ? '&#10005;' : '&#9776;';
+        });
+        nav.querySelectorAll('.nav-links a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                nav.classList.remove('nav-open');
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.innerHTML = '&#9776;';
+            });
+        });
+    })();
     </script>
 </body>
 </html>
