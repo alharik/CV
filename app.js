@@ -191,15 +191,15 @@ downloadAllBtn.addEventListener('click', async (e) => {
         const zipUrl = URL.createObjectURL(zipBlob);
         triggerDownload(zipUrl, 'mp3towav-converted.zip');
         URL.revokeObjectURL(zipUrl);
+        downloadAllBtn.textContent = 'Download All as ZIP';
+        downloadAllBtn.disabled = false;
     } catch (err) {
         console.error('ZIP creation failed:', err);
+        downloadAllBtn.disabled = false;
         downloadAllBtn.textContent = 'ZIP failed — try again';
         setTimeout(() => {
             downloadAllBtn.textContent = 'Download All as ZIP';
         }, 3000);
-    } finally {
-        downloadAllBtn.textContent = 'Download All as ZIP';
-        downloadAllBtn.disabled = false;
     }
 });
 
