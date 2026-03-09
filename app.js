@@ -612,8 +612,15 @@ function trackEvent(name, props) {
 }
 
 function updateConversionCounter(count) {
-    const total = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10) + count;
-    localStorage.setItem('mp3towav_conversions', String(total));
+    let total = count;
+    try {
+        let stored = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10);
+        if (isNaN(stored) || stored < 0) stored = 0;
+        total = stored + count;
+        localStorage.setItem('mp3towav_conversions', String(total));
+    } catch (e) {
+        // localStorage unavailable; show session-only count
+    }
     conversionCounter.textContent = '\u2713 ' + total.toLocaleString() + ' file' + (total === 1 ? '' : 's') + ' converted on this device';
     conversionCounter.classList.remove('hidden');
 }
@@ -631,9 +638,12 @@ window.addEventListener('beforeunload', () => {
 
 // --- Initialize conversion counter display ---
 (function() {
-    const count = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10);
-    if (count > 0) {
-        conversionCounter.textContent = '\u2713 ' + count.toLocaleString() + ' file' + (count === 1 ? '' : 's') + ' converted on this device';
-        conversionCounter.classList.remove('hidden');
+    try {
+        const stored = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10);
+        if (!isNaN(stored) && stored > 0) {
+            updateConversionCounter(0);
+        }
+    } catch (e) {
+        // localStorage unavailable
     }
 })();
