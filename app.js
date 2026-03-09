@@ -43,6 +43,7 @@ const batchActions = document.getElementById('batchActions');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
 const batchResetBtn = document.getElementById('batchResetBtn');
 const previewBtn = document.getElementById('previewBtn');
+const conversionCounter = document.getElementById('conversionCounter');
 
 // --- Initialize WASM after page load (doesn't block tab spinner) ---
 let wasmInitResolve;
@@ -382,6 +383,7 @@ async function convertFile(file) {
         dropZone.classList.add('done');
         showPanel(dzDone);
         trackEvent('Conversion', { type: 'single', bitDepth: String(actualBitDepth), fileCount: '1' });
+        updateConversionCounter(1);
 
         fileComparison.innerHTML = `
             <div class="file-info">
@@ -516,6 +518,7 @@ async function handleBatch(files) {
     isProcessing = false;
     if (successCount > 0) {
         trackEvent('Conversion', { type: 'batch', bitDepth: String(wasmReady ? selectedBitDepth : 16), fileCount: String(successCount) });
+        updateConversionCounter(successCount);
     }
 }
 
@@ -608,6 +611,13 @@ function trackEvent(name, props) {
     }
 }
 
+function updateConversionCounter(count) {
+    const total = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10) + count;
+    localStorage.setItem('mp3towav_conversions', String(total));
+    conversionCounter.textContent = '\u2713 ' + total.toLocaleString() + ' file' + (total === 1 ? '' : 's') + ' converted on this device';
+    conversionCounter.classList.remove('hidden');
+}
+
 // --- Cleanup blob URL on page unload ---
 window.addEventListener('beforeunload', () => {
     if (lastBlobUrl) {
@@ -618,3 +628,12 @@ window.addEventListener('beforeunload', () => {
         if (r.blobUrl) URL.revokeObjectURL(r.blobUrl);
     });
 });
+
+// --- Initialize conversion counter display ---
+(function() {
+    const count = parseInt(localStorage.getItem('mp3towav_conversions') || '0', 10);
+    if (count > 0) {
+        conversionCounter.textContent = '\u2713 ' + count.toLocaleString() + ' file' + (count === 1 ? '' : 's') + ' converted on this device';
+        conversionCounter.classList.remove('hidden');
+    }
+})();

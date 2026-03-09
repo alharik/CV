@@ -544,6 +544,16 @@ main {
     border-left: 1px solid var(--border);
 }
 
+/* ---- Conversion Counter ---- */
+.conversion-counter {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+}
+
 /* ---- Audio Preview Button ---- */
 .done-buttons {
     display: flex;
