@@ -258,9 +258,34 @@ previewBtn.addEventListener('click', (e) => {
     });
 });
 
-// --- Prevent default drag on page ---
+// --- Full-viewport drag overlay ---
+const dragOverlay = document.getElementById('dragOverlay');
+let dragCounter = 0;
+
+document.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    dragCounter++;
+    if (dragCounter === 1 && !isProcessing) {
+        dragOverlay.classList.remove('hidden');
+    }
+});
+
+document.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    dragCounter--;
+    if (dragCounter <= 0) {
+        dragCounter = 0;
+        dragOverlay.classList.add('hidden');
+    }
+});
+
 document.addEventListener('dragover', (e) => e.preventDefault());
-document.addEventListener('drop', (e) => e.preventDefault());
+
+document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragCounter = 0;
+    dragOverlay.classList.add('hidden');
+});
 
 // --- File Validation ---
 function handleFile(file) {

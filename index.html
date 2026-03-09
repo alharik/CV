@@ -176,7 +176,7 @@
                         </div>
                         <p class="drop-text">Drop your MP3 files here</p>
                         <p class="drop-subtext">or <button type="button" id="browseBtn" class="browse-link">browse files</button></p>
-                        <p class="drop-limit">MP3 files up to 100 MB</p>
+                        <p class="drop-limit"><span class="format-badge">MP3</span> files up to 100 MB</p>
                     </div>
 
                     <!-- Loading State -->
@@ -438,5 +438,11 @@
         });
     })();
     </script>
+    <div class="drag-overlay hidden" id="dragOverlay">
+        <div class="drag-overlay-content">
+            <span class="drag-overlay-icon" aria-hidden="true">&#8615;</span>
+            <p>Drop anywhere to convert</p>
+        </div>
+    </div>
 </body>
 </html>
