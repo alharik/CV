@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: sonic-converter-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    region: ohio
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: SONIC_ALLOWED_ORIGINS
+        value: https://mp3towav.online,https://www.mp3towav.online
+      - key: SONIC_API_KEYS
+        sync: false
