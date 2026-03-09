@@ -44,6 +44,9 @@ const downloadAllBtn = document.getElementById('downloadAllBtn');
 const batchResetBtn = document.getElementById('batchResetBtn');
 const previewBtn = document.getElementById('previewBtn');
 const conversionCounter = document.getElementById('conversionCounter');
+const historySection = document.getElementById('historySection');
+const historyToggle = document.getElementById('historyToggle');
+const historyList = document.getElementById('historyList');
 
 // --- Initialize WASM after page load (doesn't block tab spinner) ---
 let wasmInitResolve;
@@ -396,6 +399,7 @@ async function convertFile(file) {
         showPanel(dzDone);
         trackEvent('Conversion', { type: 'single', bitDepth: String(actualBitDepth), fileCount: '1' });
         updateConversionCounter(1);
+        addToHistory({ input: file.name, output: outputName, size: blob.size, bitDepth: actualBitDepth, date: new Date().toISOString() });
 
         fileComparison.innerHTML = `
             <div class="file-info">
@@ -531,6 +535,9 @@ async function handleBatch(files) {
     if (successCount > 0) {
         trackEvent('Conversion', { type: 'batch', bitDepth: String(wasmReady ? selectedBitDepth : 16), fileCount: String(successCount) });
         updateConversionCounter(successCount);
+        batchResults.filter(function(r) { return !r.error; }).forEach(function(r) {
+            addToHistory({ input: r.file.name, output: r.outputName, size: r.size, bitDepth: wasmReady ? selectedBitDepth : 16, date: new Date().toISOString() });
+        });
     }
 }
 
@@ -637,6 +644,74 @@ function updateConversionCounter(count) {
     conversionCounter.classList.remove('hidden');
 }
 
+// --- Conversion History ---
+function addToHistory(entry) {
+    try {
+        var history = JSON.parse(localStorage.getItem('mp3towav_history') || '[]');
+        if (!Array.isArray(history)) history = [];
+        history.unshift(entry);
+        if (history.length > 10) history = history.slice(0, 10);
+        localStorage.setItem('mp3towav_history', JSON.stringify(history));
+    } catch (e) {
+        // localStorage unavailable
+    }
+    renderHistory();
+}
+
+function renderHistory() {
+    var history = [];
+    try {
+        history = JSON.parse(localStorage.getItem('mp3towav_history') || '[]');
+        if (!Array.isArray(history)) history = [];
+    } catch (e) {
+        return;
+    }
+    if (history.length === 0) {
+        historySection.classList.add('hidden');
+        return;
+    }
+    historySection.classList.remove('hidden');
+    historyList.innerHTML = history.map(function(h) {
+        return '<div class="history-item">' +
+            '<span class="history-item-name">' + escapeHtml(h.input) + '</span>' +
+            '<span class="history-item-meta">' + formatSize(h.size) + ' \u00b7 ' + h.bitDepth + '-bit \u00b7 ' + timeAgo(h.date) + '</span>' +
+            '</div>';
+    }).join('') + '<button class="history-clear" id="historyClear">Clear history</button>';
+
+    var clearBtn = document.getElementById('historyClear');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', function() {
+            try { localStorage.removeItem('mp3towav_history'); } catch (e) {}
+            historyList.innerHTML = '';
+            historyList.classList.add('hidden');
+            historySection.classList.add('hidden');
+            historyToggle.setAttribute('aria-expanded', 'false');
+        });
+    }
+}
+
+function timeAgo(dateStr) {
+    try {
+        var now = Date.now();
+        var then = new Date(dateStr).getTime();
+        var diff = Math.floor((now - then) / 1000);
+        if (isNaN(diff) || diff < 0) return '';
+        if (diff < 60) return 'just now';
+        if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+        if (diff < 172800) return 'yesterday';
+        return new Date(dateStr).toLocaleDateString();
+    } catch (e) {
+        return '';
+    }
+}
+
+historyToggle.addEventListener('click', function() {
+    var expanded = historyToggle.getAttribute('aria-expanded') === 'true';
+    historyToggle.setAttribute('aria-expanded', String(!expanded));
+    historyList.classList.toggle('hidden');
+});
+
 // --- Cleanup blob URL on page unload ---
 window.addEventListener('beforeunload', () => {
     if (lastBlobUrl) {
@@ -659,3 +734,6 @@ window.addEventListener('beforeunload', () => {
         // localStorage unavailable
     }
 })();
+
+// --- Initialize conversion history display ---
+renderHistory();
