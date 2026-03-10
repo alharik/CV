@@ -98,7 +98,7 @@
                             <li>Standard priority</li>
                             <li>Email support</li>
                         </ul>
-                        <a class="pricing-btn pricing-btn-primary" href="https://buy.stripe.com/STRIPE_PRO_LINK" target="_blank" rel="noopener">Subscribe</a>
+                        <a class="pricing-btn pricing-btn-primary" href="https://YOUR_GUMROAD_USERNAME.gumroad.com/l/sonic-api-pro" target="_blank" rel="noopener">Subscribe</a>
                     </div>
 
                     <div class="pricing-card pricing-card-featured">
@@ -113,7 +113,7 @@
                             <li>Priority email support</li>
                             <li>Webhook callbacks</li>
                         </ul>
-                        <a class="pricing-btn pricing-btn-primary" href="https://buy.stripe.com/STRIPE_BUSINESS_LINK" target="_blank" rel="noopener">Subscribe</a>
+                        <a class="pricing-btn pricing-btn-primary" href="https://YOUR_GUMROAD_USERNAME.gumroad.com/l/sonic-api-business" target="_blank" rel="noopener">Subscribe</a>
                     </div>
 
                     <div class="pricing-card">
@@ -128,7 +128,7 @@
                             <li>Webhook callbacks</li>
                             <li>Custom output formats</li>
                         </ul>
-                        <a class="pricing-btn pricing-btn-primary" href="https://buy.stripe.com/STRIPE_UNLIMITED_LINK" target="_blank" rel="noopener">Subscribe</a>
+                        <a class="pricing-btn pricing-btn-primary" href="https://YOUR_GUMROAD_USERNAME.gumroad.com/l/sonic-api-unlimited" target="_blank" rel="noopener">Subscribe</a>
                     </div>
                 </div>
 
@@ -301,17 +301,15 @@ writeFileSync("output.wav", Buffer.from(await res.arrayBuffer()));</code></pre>
                 </div>
 
                 <!--
-                    STRIPE INTEGRATION:
-                    1. Create subscription products in Stripe Dashboard:
+                    GUMROAD INTEGRATION:
+                    1. Create subscription products on Gumroad:
                        - "Sonic Converter API - Pro" ($9/mo recurring)
                        - "Sonic Converter API - Business" ($19/mo recurring)
                        - "Sonic Converter API - Unlimited" ($49/mo recurring)
-                    2. Create Payment Links for each product in Stripe Dashboard
-                    3. Replace the placeholder URLs above:
-                       - STRIPE_PRO_LINK → your Pro payment link ID
-                       - STRIPE_BUSINESS_LINK → your Business payment link ID
-                       - STRIPE_UNLIMITED_LINK → your Unlimited payment link ID
-                    4. Payment links open Stripe's hosted checkout page
+                    2. Replace YOUR_GUMROAD_USERNAME with your Gumroad username
+                    3. Replace the product slugs (sonic-api-pro, sonic-api-business, sonic-api-unlimited)
+                       with your actual Gumroad product short URLs
+                    4. Gumroad handles checkout, billing, and subscription management
                 -->
             </div>
         </section>
