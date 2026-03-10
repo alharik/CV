@@ -1,0 +1,15 @@
+# Rust source & build artifacts (API server runs separately)
+sonic-converter/
+
+# Rust installer
+rustup-init.exe
+
+# Dev tooling
+.claude/
+node_modules/
+.DS_Store
+
+# Dev-only files
+server.py
+*.md
+.env*.local

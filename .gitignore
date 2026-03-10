@@ -4,3 +4,5 @@ node_modules/
 rustup-init.exe
 sonic-converter/target/
 sonic-converter/pkg/
+.vercel
+.env*.local

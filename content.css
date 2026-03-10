@@ -11,7 +11,7 @@
     --border-hover: #3f3f46;
     --text: #fafafa;
     --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
+    --text-muted: #8a8a93;
     --primary: #f97316;
     --primary-hover: #fb923c;
     --primary-glow: rgba(249, 115, 22, 0.15);
@@ -129,14 +129,14 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.article a {
+.article a:not(.cta-btn):not(.pricing-btn) {
     color: var(--primary);
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
 }
 
-.article a:hover {
+.article a:not(.cta-btn):not(.pricing-btn):hover {
     color: var(--primary-hover);
 }
 
@@ -188,7 +188,8 @@ body {
     margin-bottom: 1.25rem;
 }
 
-.cta-btn {
+.cta-btn,
+.article .cta-btn {
     display: inline-block;
     padding: 0.75rem 2rem;
     background: var(--primary);
