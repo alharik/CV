@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Dashboard — Sonic Converter | mp3towav.online</title>
+    <meta name="description" content="View your Sonic Converter API usage, remaining quota, and account details.">
+    <meta name="robots" content="noindex">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/content.css">
+    <link rel="stylesheet" href="/api/dashboard/dash-styles.css">
+
+    <!-- Plausible Analytics -->
+    <script defer data-domain="mp3towav.online" src="https://plausible.io/js/script.js"></script>
+    <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="site-nav">
+        <a class="nav-logo" href="/">mp3towav<span>.online</span></a>
+        <div class="nav-links">
+            <a href="/">Converter</a>
+            <a href="/api/">API</a>
+            <a href="/api/dashboard/" class="active">Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="container article">
+        <!-- Auth Section -->
+        <div id="auth-section">
+            <h1>API Dashboard</h1>
+            <p class="meta">Enter your API key to view usage and account details.</p>
+
+            <form id="keyForm" class="key-form">
+                <div class="input-group">
+                    <input
+                        type="password"
+                        id="apiKeyInput"
+                        placeholder="sk_your_api_key_here"
+                        autocomplete="off"
+                        spellcheck="false"
+                        required
+                    >
+                    <button type="submit" class="btn-primary" id="loadBtn">
+                        <span class="btn-text">View Usage</span>
+                        <span class="btn-loading" hidden>Loading...</span>
+                    </button>
+                </div>
+                <p class="key-hint">Your key is only sent to the API and stored in your browser's local storage.</p>
+                <div id="error-msg" class="error-msg" hidden></div>
+            </form>
+        </div>
+
+        <!-- Dashboard Section (hidden until authenticated) -->
+        <div id="dashboard-section" hidden>
+            <div class="dash-header">
+                <div>
+                    <h1>API Dashboard</h1>
+                    <p class="meta">Current billing period: <span id="current-month"></span></p>
+                </div>
+                <button id="logoutBtn" class="btn-secondary">Change Key</button>
+            </div>
+
+            <!-- Tier Badge -->
+            <div class="tier-badge-container">
+                <span class="tier-badge" id="tier-badge">Free</span>
+            </div>
+
+            <!-- Usage Cards -->
+            <div class="stats-grid">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-label">Conversions Used</div>
+                    <div class="stat-value">
+                        <span id="conv-used">0</span>
+                        <span class="stat-divider">/</span>
+                        <span id="conv-limit">500</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="conv-progress"></div>
+                    </div>
+                    <div class="stat-sub">Resets <span id="resets-at"></span></div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Info Requests</div>
+                    <div class="stat-value" id="info-count">0</div>
+                    <div class="stat-sub">This month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Data Processed</div>
+                    <div class="stat-value" id="data-in">0 MB</div>
+                    <div class="stat-sub">Input uploaded</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">Data Output</div>
+                    <div class="stat-value" id="data-out">0 MB</div>
+                    <div class="stat-sub">WAV generated</div>
+                </div>
+            </div>
+
+            <!-- Tier Limits -->
+            <div class="limits-section">
+                <h2>Your Plan Limits</h2>
+                <div class="limits-grid">
+                    <div class="limit-item">
+                        <span class="limit-label">Max File Size</span>
+                        <span class="limit-value" id="max-file-size">100 MB</span>
+                    </div>
+                    <div class="limit-item">
+                        <span class="limit-label">Bit Depths</span>
+                        <span class="limit-value" id="bit-depths">16-bit</span>
+                    </div>
+                    <div class="limit-item">
+                        <span class="limit-label">Rate Limit</span>
+                        <span class="limit-value" id="rate-limit">10 req/min</span>
+                    </div>
+                    <div class="limit-item">
+                        <span class="limit-label">Webhooks</span>
+                        <span class="limit-value" id="webhooks-available">Not available</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upgrade CTA -->
+            <div class="upgrade-section" id="upgrade-section" hidden>
+                <p>Need more conversions? <a href="/api/#pricing">Upgrade your plan</a> for higher limits and more features.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span>&copy; 2025 mp3towav.online</span>
+            <div class="footer-links">
+                <a href="/privacy/">Privacy</a>
+                <a href="/terms/">Terms</a>
+                <a href="/api/">API</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/api/dashboard/dash-app.js"></script>
+</body>
+</html>

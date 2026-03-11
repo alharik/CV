@@ -22,7 +22,7 @@ default = ["parallel", "mmap"]
 parallel = ["dep:rayon"]
 mmap = ["dep:memmap2"]
 wasm = ["dep:wasm-bindgen", "dep:js-sys", "dep:web-sys", "dep:console_error_panic_hook"]
-server = ["dep:axum", "dep:tokio", "dep:tower", "dep:tower-http", "dep:serde", "dep:serde_json", "dep:uuid", "dep:tempfile", "dep:tokio-util"]
+server = ["dep:axum", "dep:tokio", "dep:tower", "dep:tower-http", "dep:serde", "dep:serde_json", "dep:uuid", "dep:tempfile", "dep:tokio-util", "dep:tracing", "dep:tracing-subscriber", "dep:governor", "dep:dashmap", "dep:libsql", "dep:sha2", "dep:chrono", "dep:hmac", "dep:hex", "dep:reqwest"]
 
 [dependencies]
 # Core: MP3 decoding
@@ -55,6 +55,16 @@ serde_json = { version = "1", optional = true }
 uuid = { version = "1", optional = true, features = ["v4"] }
 tempfile = { version = "3", optional = true }
 tokio-util = { version = "0.7", optional = true, features = ["io"] }
+tracing = { version = "0.1", optional = true }
+tracing-subscriber = { version = "0.3", optional = true, features = ["env-filter", "json"] }
+governor = { version = "0.6", optional = true }
+dashmap = { version = "6", optional = true }
+libsql = { version = "0.6", optional = true }
+sha2 = { version = "0.10", optional = true }
+chrono = { version = "0.4", optional = true, features = ["serde"] }
+hmac = { version = "0.12", optional = true }
+hex = { version = "0.4", optional = true }
+reqwest = { version = "0.12", optional = true, features = ["json"] }
 
 
 [dev-dependencies]

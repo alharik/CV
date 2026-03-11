@@ -42,7 +42,7 @@ pub fn decode_mp3_reader<R: Read + Seek + Send + Sync + 'static>(reader: R) -> R
         enable_gapless: true,
         ..Default::default()
     };
-    let metadata_opts = MetadataOptions::default();
+    let _metadata_opts = MetadataOptions::default();
 
     let mut format = MpaReader::try_new(mss, &format_opts)
         .map_err(|e| SonicError::Decode(format!("Failed to read MP3: {}", e)))?;
