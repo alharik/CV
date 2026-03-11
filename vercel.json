@@ -1,5 +1,9 @@
 {
   "cleanUrls": false,
+  "redirects": [
+    { "source": "/api/:path*", "destination": "/", "permanent": false },
+    { "source": "/api", "destination": "/", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -26,7 +30,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://plausible.io https://formspree.io https://api.mp3towav.online; frame-src 'none'; object-src 'none'; base-uri 'self'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://va.vercel-scripts.com https://pagead2.googlesyndication.com https://www.googletagservices.com https://adservice.google.com https://tpc.googlesyndication.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: https://pagead2.googlesyndication.com; connect-src 'self' https://plausible.io https://formspree.io https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com; object-src 'none'; base-uri 'self'"
         }
       ]
     },
