@@ -1,3 +1,7 @@
+// DISABLED: Database functionality disabled — site operates on ad revenue only.
+// To re-enable: remove the /* ... */ block comment wrapping this file.
+
+/*
 /// Database layer for Sonic Converter API — Turso (libSQL) backed.
 ///
 /// Handles:
@@ -283,3 +287,4 @@ impl Database {
         }
     }
 }
+*/
