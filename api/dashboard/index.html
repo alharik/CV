@@ -13,7 +13,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" crossorigin>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin></noscript>
 
     <!-- Styles -->
     <link rel="stylesheet" href="/content.css">
@@ -152,5 +154,9 @@
     </footer>
 
     <script src="/api/dashboard/dash-app.js"></script>
+    <script type="module">
+        import { injectSpeedInsights } from 'https://cdn.vercel-insights.com/v1/speed-insights';
+        injectSpeedInsights();
+    </script>
 </body>
 </html>

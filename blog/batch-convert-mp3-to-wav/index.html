@@ -16,7 +16,9 @@
     <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" crossorigin>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin></noscript>
     <link rel="stylesheet" href="/content.css">
 
     <!-- Plausible Analytics -->
@@ -190,5 +192,9 @@ for filename in os.listdir(input_dir):
             <p>&copy; 2026 mp3towav.online — Free, private MP3 to WAV conversion.</p>
         </div>
     </footer>
+    <script type="module">
+        import { injectSpeedInsights } from 'https://cdn.vercel-insights.com/v1/speed-insights';
+        injectSpeedInsights();
+    </script>
 </body>
 </html>
