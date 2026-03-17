@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Astro Dev Server",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/astro/bin/astro.mjs", "dev"],
+      "port": 4321
+    },
+    {
+      "name": "Astro Preview (production build)",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["node_modules/astro/bin/astro.mjs", "preview"],
+      "port": 4321
+    }
+  ]
+}

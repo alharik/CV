@@ -1,0 +1,69 @@
+<section id="hero" class="relative flex min-h-screen items-center justify-center overflow-hidden py-32">
+  <!-- Content -->
+  <div class="relative z-10 text-center">
+    <!-- Particle typography canvas -->
+    <div data-hero-heading class="gsap-reveal relative mx-auto flex items-center justify-center h-[80px] md:h-[180px] w-[90vw] max-w-4xl">
+      <canvas id="particle-name" class="absolute inset-0 h-full w-full"></canvas>
+      <h1 id="particle-fallback" class="text-[clamp(3rem,8vw,6rem)] font-bold tracking-tight text-text-primary" style="display:none;">
+        ALI YASER AL HARIK
+      </h1>
+    </div>
+    <h1 class="sr-only">ALI YASER AL HARIK</h1>
+    <noscript>
+      <h1 class="text-[clamp(3rem,8vw,6rem)] font-bold tracking-tight text-text-primary text-center">
+        ALI YASER AL HARIK
+      </h1>
+    </noscript>
+    <p data-hero-subtitle class="gsap-reveal mt-4 text-lg font-normal text-text-muted">
+      Content Creator · Airport Services · Music Artist · Builder
+    </p>
+    <div data-hero-cta class="gsap-reveal mt-8 flex items-center justify-center gap-6">
+      <a href="#projects" class="text-sm uppercase tracking-widest text-accent transition-opacity duration-200 hover:opacity-80">
+        View Work
+      </a>
+      <a href="#contact" class="text-sm uppercase tracking-widest text-accent transition-opacity duration-200 hover:opacity-80">
+        Get in Touch
+      </a>
+    </div>
+
+    <!-- Hero video -->
+    <div data-hero-video class="gsap-reveal relative mx-auto mt-16 max-w-[640px] px-4 md:px-0">
+      <!-- Glow behind video -->
+      <div class="pointer-events-none absolute -inset-4 rounded-xl bg-accent opacity-25 blur-[80px]"></div>
+      <!-- Video glass frame -->
+      <div class="video-glass relative rounded-xl p-1">
+        <div class="relative overflow-hidden rounded-lg">
+          <video
+            src="/hero-video.mp4"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            class="block w-full"
+          ></video>
+          <!-- Gradient overlay -->
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-bg-base/5"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .video-glass {
+    background: rgba(18, 18, 26, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+</style>
+
+<script>
+  import { initParticleText } from "../scripts/particle-text";
+
+  const particleCanvas = document.getElementById("particle-name") as HTMLCanvasElement;
+  if (particleCanvas) {
+    initParticleText(particleCanvas);
+  }
+</script>

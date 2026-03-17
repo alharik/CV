@@ -1,0 +1,78 @@
+<nav id="navbar" aria-label="Main navigation" class="fixed top-0 left-0 z-50 w-full transition-all duration-500">
+  <div class="navbar-inner mx-auto mt-4 flex max-w-fit items-center justify-center gap-1 rounded-xl px-2 py-2 transition-all duration-500">
+    <a href="#about" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">About</a>
+    <a href="#projects" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">Work</a>
+    <a href="#cta" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">Contact</a>
+  </div>
+</nav>
+
+<style is:global>
+  .navbar-inner {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  .navbar-inner.navbar-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  #navbar.navbar-scrolled .navbar-inner {
+    background: rgba(18, 18, 26, 0.5);
+    border-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .nav-link {
+    position: relative;
+  }
+
+  .nav-link:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--accent);
+    transition: width 0.3s ease, left 0.3s ease;
+  }
+
+  .nav-link:hover::after {
+    width: 40%;
+    left: 30%;
+  }
+</style>
+
+<script>
+  const navbar = document.getElementById("navbar");
+  const navInner = document.querySelector(".navbar-inner");
+  const SCROLL_THRESHOLD = 50;
+
+  // Animate in on load
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      navInner?.classList.add("navbar-visible");
+    }, 600);
+  });
+
+  function onScroll() {
+    if (window.scrollY > SCROLL_THRESHOLD) {
+      navbar?.classList.add("navbar-scrolled");
+    } else {
+      navbar?.classList.remove("navbar-scrolled");
+    }
+  }
+
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+</script>

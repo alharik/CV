@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(npm create:*)",
+      "Bash(cp -r astro-temp/.gitignore astro-temp/.vscode astro-temp/astro.config.mjs astro-temp/package.json astro-temp/public astro-temp/src astro-temp/tsconfig.json alharikcv/)",
+      "Bash(rm -rf astro-temp)",
+      "Bash(npm install:*)",
+      "Bash(curl -L -o inter-variable.woff2 \"https://github.com/rsms/inter/raw/master/docs/font-files/InterVariable.woff2\")",
+      "Bash(curl -L -o jetbrains-mono-variable.woff2 \"https://github.com/JetBrains/JetBrainsMono/raw/master/fonts/variable/JetBrainsMono%5Bwght%5D.woff2\")",
+      "Bash(timeout 15 npx astro dev)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:api.fontshare.com)",
+      "Bash(curl -L -o \"/c/Users/James Waynn/Desktop/alharikcv/public/fonts/satoshi-variable.woff2\" \"https://cdn.fontshare.com/wf/NWBQYJIM7GCZ5XWD7D26ARB3VDY55ZRT/K63EV2KZIGKLE7RANQ2U42S6SVHU5RJ7/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.woff2\")",
+      "Bash(xxd -l 32 \"/c/Users/James Waynn/Desktop/alharikcv/public/hero-video.mp4\")",
+      "Bash(npm run:*)",
+      "Bash(tasklist)"
+    ]
+  }
+}

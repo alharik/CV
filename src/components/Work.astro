@@ -1,0 +1,535 @@
+---
+import { work } from "../data/work";
+
+// Split items into columns for the staggered grid
+const col1 = [work[0], work[3]];
+const col2 = [work[1], work[4]];
+const col3 = [work[2], work[5]];
+
+// Build lookup for lightbox (single source of truth)
+const workLookup: Record<string, { title: string; role: string; image: string; url: string }> = {};
+for (const item of work) {
+  workLookup[item.id] = { title: item.title, role: item.role, image: item.image, url: item.url };
+}
+---
+
+<section id="projects" class="px-6 py-32">
+  <div class="mx-auto max-w-6xl">
+    <h2 data-reveal class="gsap-reveal mb-12 text-[2rem] font-semibold text-text-primary">Featured Work</h2>
+
+    <!-- Desktop layout -->
+    <div class="hidden items-start gap-12 md:flex">
+
+      <!-- LEFT: Photo Grid (60%) -->
+      <div class="grid w-[60%] shrink-0 grid-cols-3 gap-2">
+        <!-- Column 1 — no offset -->
+        <div class="flex flex-col gap-2">
+          {col1.map((item) => (
+            <div
+              data-work-id={item.id}
+              class="work-photo-container cursor-pointer overflow-hidden"
+              style="width: 155px; height: 165px; border-radius: 12px;"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                width="155"
+                height="165"
+                loading="lazy"
+                class="work-photo h-full w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <!-- Column 2 — 64px offset -->
+        <div class="mt-16 flex flex-col gap-2">
+          {col2.map((item) => (
+            <div
+              data-work-id={item.id}
+              class="work-photo-container cursor-pointer overflow-hidden"
+              style="width: 172px; height: 182px; border-radius: 12px;"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                width="172"
+                height="182"
+                loading="lazy"
+                class="work-photo h-full w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <!-- Column 3 — 28px offset -->
+        <div class="mt-7 flex flex-col gap-2">
+          {col3.map((item) => (
+            <div
+              data-work-id={item.id}
+              class="work-photo-container cursor-pointer overflow-hidden"
+              style="width: 162px; height: 172px; border-radius: 12px;"
+            >
+              <img
+                src={item.image}
+                alt={item.title}
+                width="162"
+                height="172"
+                loading="lazy"
+                class="work-photo h-full w-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- RIGHT: Name List (40%) -->
+      <div class="flex w-[40%] flex-col gap-5 pt-2">
+        {work.map((item) => (
+          <div data-work-id={item.id} class="work-list-item cursor-pointer">
+            <div class="flex items-center gap-[10px]">
+              <span class="work-dot"></span>
+              <span class="work-title text-[18px] font-semibold tracking-tight text-text-primary">{item.title}</span>
+            </div>
+            <div class="pl-[27px]">
+              <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted">{item.role}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Mobile layout -->
+    <!-- Photo row: horizontal scroll -->
+    <div id="work-mobile-scroll" class="mb-6 flex gap-2 overflow-x-auto md:hidden" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+      {work.map((item) => (
+        <div
+          data-work-id={item.id}
+          class="work-photo-container flex-none cursor-pointer overflow-hidden"
+          style="width: 140px; height: 150px; border-radius: 12px; scroll-snap-align: start;"
+        >
+          <img
+            src={item.image}
+            alt={item.title}
+            width="140"
+            height="150"
+            loading="lazy"
+            class="work-photo h-full w-full object-cover"
+          />
+        </div>
+      ))}
+    </div>
+
+    <!-- Name list: 2-column grid -->
+    <div class="grid grid-cols-2 gap-4 md:hidden">
+      {work.map((item) => (
+        <div data-work-id={item.id} class="work-list-item cursor-pointer">
+          <div class="flex items-center gap-2">
+            <span class="work-dot"></span>
+            <span class="work-title text-sm font-semibold tracking-tight text-text-primary">{item.title}</span>
+          </div>
+          <div class="pl-[24px]">
+            <span class="text-[9px] font-medium uppercase tracking-[0.2em] text-text-muted">{item.role}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox overlay -->
+<div id="work-lightbox" class="work-lightbox">
+  <div class="work-lightbox-backdrop"></div>
+  <div class="work-lightbox-content">
+    <div class="work-lightbox-card">
+      <img id="work-lightbox-img" src="" alt="" class="work-lightbox-img" />
+    </div>
+    <div class="work-lightbox-info">
+      <h3 id="work-lightbox-title" class="work-lightbox-title"></h3>
+      <p id="work-lightbox-role" class="work-lightbox-role"></p>
+      <a id="work-lightbox-link" href="#" target="_blank" rel="noopener noreferrer" class="work-lightbox-link">
+        View Project
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 17L17 7M17 7H7M17 7V17"/>
+        </svg>
+      </a>
+    </div>
+    <button id="work-lightbox-close" class="work-lightbox-close" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6L6 18M6 6L18 18"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style is:global>
+  .work-photo-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .work-photo {
+    filter: grayscale(1) brightness(0.77);
+    transition: filter 500ms ease, opacity 400ms ease;
+  }
+
+  .work-photo.work-active {
+    filter: grayscale(0) brightness(1);
+  }
+
+  .work-photo-container.work-dimmed .work-photo {
+    opacity: 0.6;
+  }
+
+  .work-dot {
+    width: 16px;
+    height: 12px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.25);
+    transition: all 300ms ease;
+    flex-shrink: 0;
+  }
+
+  .work-dot.work-active {
+    background: var(--text-primary);
+    width: 20px;
+  }
+
+  .work-list-item {
+    transition: opacity 300ms ease;
+  }
+
+  .work-list-item.work-dimmed {
+    opacity: 0.5;
+  }
+
+  .work-title {
+    opacity: 0.8;
+    transition: opacity 300ms ease;
+  }
+
+  .work-title.work-active {
+    opacity: 1;
+  }
+
+  /* Hide mobile scroll scrollbar */
+  .md\:hidden[style*="scroll-snap-type"]::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Lightbox */
+  .work-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .work-lightbox.is-open {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .work-lightbox-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.92);
+  }
+
+  .work-lightbox-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    max-width: 90vw;
+  }
+
+  .work-lightbox-card {
+    width: auto;
+    max-width: 90vw;
+    max-height: 65vh;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .work-lightbox-img {
+    max-width: 100%;
+    max-height: 65vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .work-lightbox-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .work-lightbox-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .work-lightbox-role {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--text-secondary);
+  }
+
+  .work-lightbox-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: rgba(59, 130, 246, 0.12);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 300ms ease, border-color 300ms ease;
+  }
+
+  .work-lightbox-link:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.35);
+  }
+
+  .work-lightbox-link[href="#"] {
+    display: none;
+  }
+
+  .work-lightbox-close {
+    position: absolute;
+    top: -44px;
+    right: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: background 200ms ease;
+  }
+
+  .work-lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  /* Blur the section content when lightbox is open */
+  #projects.work-blurred > .mx-auto {
+    filter: blur(12px);
+    transition: filter 400ms ease;
+  }
+</style>
+
+<script id="work-data" type="application/json" set:html={JSON.stringify(workLookup)}></script>
+
+<script>
+  import gsap from "gsap";
+
+  const allElements = document.querySelectorAll<HTMLElement>("[data-work-id]");
+  const mobileScroll = document.getElementById("work-mobile-scroll");
+  const workIds = ["retro-gaming", "ps5-launch", "black-friday", "laptop-offer", "sonic-converter", "instagram-portfolio"];
+
+  let activeIndex = 0;
+  let timer: ReturnType<typeof setInterval>;
+  let isHovering = false;
+  const INTERVAL = 3000;
+
+  function setActive(id: string) {
+    allElements.forEach((el) => {
+      const elId = el.dataset.workId;
+      const photo = el.querySelector(".work-photo") as HTMLElement | null;
+      const dot = el.querySelector(".work-dot") as HTMLElement | null;
+      const title = el.querySelector(".work-title") as HTMLElement | null;
+
+      if (elId === id) {
+        el.classList.add("work-active");
+        el.classList.remove("work-dimmed");
+        photo?.classList.add("work-active");
+        photo?.classList.remove("work-dimmed");
+        dot?.classList.add("work-active");
+        title?.classList.add("work-active");
+
+        // GSAP pop animation on the photo container
+        if (el.classList.contains("work-photo-container")) {
+          gsap.fromTo(el, { scale: 0.95 }, { scale: 1, duration: 0.5, ease: "back.out(1.5)" });
+
+          // Auto-scroll mobile row to keep active photo visible
+          if (mobileScroll && mobileScroll.contains(el)) {
+            const scrollLeft = el.offsetLeft - mobileScroll.offsetWidth / 2 + el.offsetWidth / 2;
+            mobileScroll.scrollTo({ left: scrollLeft, behavior: "smooth" });
+          }
+        }
+
+        // GSAP slide on list item dot
+        if (dot) {
+          gsap.fromTo(dot, { x: -4 }, { x: 0, duration: 0.3, ease: "power2.out" });
+        }
+      } else {
+        el.classList.remove("work-active");
+        el.classList.add("work-dimmed");
+        photo?.classList.remove("work-active");
+        dot?.classList.remove("work-active");
+        title?.classList.remove("work-active");
+      }
+    });
+  }
+
+  function clearActive() {
+    allElements.forEach((el) => {
+      el.classList.remove("work-active", "work-dimmed");
+      el.querySelector(".work-photo")?.classList.remove("work-active", "work-dimmed");
+      el.querySelector(".work-dot")?.classList.remove("work-active");
+      el.querySelector(".work-title")?.classList.remove("work-active");
+    });
+  }
+
+  function autoAdvance() {
+    activeIndex = (activeIndex + 1) % workIds.length;
+    setActive(workIds[activeIndex]);
+  }
+
+  function startAutoplay() {
+    clearInterval(timer);
+    timer = setInterval(autoAdvance, INTERVAL);
+  }
+
+  function stopAutoplay() {
+    clearInterval(timer);
+  }
+
+  // Hover handlers
+  allElements.forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      isHovering = true;
+      stopAutoplay();
+      const id = el.dataset.workId!;
+      activeIndex = workIds.indexOf(id);
+      setActive(id);
+    });
+
+    el.addEventListener("mouseleave", () => {
+      isHovering = false;
+      clearActive();
+      // Resume autoplay after a brief pause
+      setTimeout(() => {
+        if (!isHovering) startAutoplay();
+      }, 800);
+    });
+  });
+
+  // Start with first item active + autoplay
+  setActive(workIds[0]);
+  startAutoplay();
+
+  // --- Lightbox ---
+  const lightbox = document.getElementById("work-lightbox")!;
+  const lightboxBackdrop = lightbox.querySelector(".work-lightbox-backdrop") as HTMLElement;
+  const lightboxContent = lightbox.querySelector(".work-lightbox-content") as HTMLElement;
+  const lightboxImg = document.getElementById("work-lightbox-img") as HTMLImageElement;
+  const lightboxTitle = document.getElementById("work-lightbox-title") as HTMLElement;
+  const lightboxRole = document.getElementById("work-lightbox-role") as HTMLElement;
+  const lightboxLink = document.getElementById("work-lightbox-link") as HTMLAnchorElement;
+  const lightboxClose = document.getElementById("work-lightbox-close") as HTMLElement;
+  const projectsSection = document.getElementById("projects") as HTMLElement;
+
+  const workDataEl = document.getElementById("work-data") as HTMLScriptElement | null;
+  const workData: Record<string, { title: string; role: string; image: string; url: string }> = workDataEl ? JSON.parse(workDataEl.textContent || "{}") : {};
+
+  let lightboxOpen = false;
+
+  function openLightbox(id: string) {
+    const data = workData[id];
+    if (!data) return;
+
+    lightboxImg.src = data.image;
+    lightboxImg.alt = data.title;
+    lightboxTitle.textContent = data.title;
+    lightboxRole.textContent = data.role;
+    lightboxLink.href = data.url;
+    lightboxOpen = true;
+
+    // Pause autoplay
+    stopAutoplay();
+
+    // Blur section background
+    projectsSection.classList.add("work-blurred");
+
+    // Show lightbox
+    lightbox.classList.add("is-open");
+
+    // Animate in
+    const tl = gsap.timeline();
+    tl.fromTo(lightboxBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" });
+    tl.fromTo(
+      lightboxContent,
+      { opacity: 0, scale: 0.9, y: 30 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(1.4)" },
+      "-=0.15"
+    );
+
+    // Lock scroll
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    if (!lightboxOpen) return;
+    lightboxOpen = false;
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        lightbox.classList.remove("is-open");
+        projectsSection.classList.remove("work-blurred");
+        document.body.style.overflow = "";
+        // Resume autoplay
+        if (!isHovering) startAutoplay();
+      },
+    });
+
+    tl.to(lightboxContent, { opacity: 0, scale: 0.92, y: 20, duration: 0.3, ease: "power2.in" });
+    tl.to(lightboxBackdrop, { opacity: 0, duration: 0.25, ease: "power2.in" }, "-=0.15");
+  }
+
+  // Click handlers on all work elements
+  allElements.forEach((el) => {
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const id = el.dataset.workId;
+      if (id) openLightbox(id);
+    });
+  });
+
+  // Close handlers
+  lightboxClose.addEventListener("click", closeLightbox);
+  lightboxBackdrop.addEventListener("click", closeLightbox);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightboxOpen) closeLightbox();
+  });
+</script>
