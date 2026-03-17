@@ -1,140 +1,215 @@
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  age: number;
-  life: number;
+/**
+ * WebGL2 shader background — warm upward-drifting nebula.
+ * Replaces the old Canvas 2D particle flow field.
+ * Based on shader by Matthias Hurrle (@atzedent), modified for:
+ *   - Upward drift (instead of rightward)
+ *   - Warm red tones matching #EF4444
+ *   - Subtle ambient intensity for site-wide use
+ *   - Pointer interactivity
+ *   - prefers-reduced-motion support
+ */
+
+const VERTEX_SRC = `#version 300 es
+precision highp float;
+in vec4 position;
+void main() { gl_Position = position; }`;
+
+const FRAGMENT_SRC = `#version 300 es
+precision highp float;
+out vec4 O;
+uniform vec2 resolution;
+uniform float time;
+uniform vec2 touch;
+uniform int pointerCount;
+
+#define FC gl_FragCoord.xy
+#define T time
+#define R resolution
+#define MN min(R.x, R.y)
+
+float rnd(vec2 p) {
+  p = fract(p * vec2(12.9898, 78.233));
+  p += dot(p, p + 34.56);
+  return fract(p.x * p.y);
 }
+
+float noise(in vec2 p) {
+  vec2 i = floor(p), f = fract(p), u = f * f * (3. - 2. * f);
+  float
+    a = rnd(i),
+    b = rnd(i + vec2(1, 0)),
+    c = rnd(i + vec2(0, 1)),
+    d = rnd(i + 1.);
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}
+
+float fbm(vec2 p) {
+  float t = 0., a = 1.;
+  mat2 m = mat2(1., -.5, .2, 1.2);
+  for (int i = 0; i < 5; i++) {
+    t += a * noise(p);
+    p *= 2. * m;
+    a *= .5;
+  }
+  return t;
+}
+
+float clouds(vec2 p) {
+  float d = 1., t = 0.;
+  for (float i = 0.; i < 3.; i++) {
+    float a = d * fbm(i * 10. + p.x * .2 + .2 * (1. + i) * p.y + d + i * i + p);
+    t = mix(t, d, a);
+    d = a;
+    p *= 2. / (i + 1.);
+  }
+  return t;
+}
+
+void main(void) {
+  vec2 uv = (FC - .5 * R) / MN;
+  vec2 st = uv * vec2(2, 1);
+  vec3 col = vec3(0);
+
+  // Clouds drift UPWARD (st.y + T) instead of rightward
+  float bg = clouds(vec2(st.x, -st.y + T * .25));
+
+  uv *= 1. - .3 * (sin(T * .2) * .5 + .5);
+
+  // Upward drift applied to point lights
+  vec2 drift = vec2(0., -T * .012);
+
+  for (float i = 1.; i < 12.; i++) {
+    uv += .1 * cos(i * vec2(.1 + .01 * i, .8) + i * i + T * .4 + .1 * uv.x);
+    vec2 p = uv + drift;
+    float d = length(p);
+
+    // Point lights — warm shifted, reduced brightness for ambient use
+    col += .0006 / d * (cos(sin(i) * vec3(0.5, 1.8, 3.)) + 1.);
+
+    float b = noise(i + p + bg * 1.731);
+    col += .0012 * b / length(max(p, vec2(b * p.x * .02, p.y)));
+
+    // Mix with warm red cloud color — subtle
+    col = mix(col, vec3(bg * .22, bg * .06, bg * .025), d);
+  }
+
+  // Pointer interaction — subtle glow near cursor
+  if (pointerCount > 0) {
+    vec2 tp = touch / R;
+    tp.y = 1. - tp.y;
+    vec2 tuv = FC / R;
+    float td = length(tuv - tp);
+    col += vec3(.15, .03, .01) * .04 / (td + .05);
+  }
+
+  // Overall dim for ambient background use
+  col *= .65;
+
+  O = vec4(col, 1);
+}`;
 
 export function init(): void {
   const canvas = document.getElementById("flow-field") as HTMLCanvasElement | null;
   if (!canvas) return;
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  const gl = canvas.getContext("webgl2");
+  if (!gl) return; // WebGL2 not supported, fail silently
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const PARTICLE_COUNT = reducedMotion ? 60 : 150;
-  const MAX_ALPHA = 0.2;
-  const FRICTION = 0.95;
-  const SPEED = 0.05;
-  const REPULSION_RADIUS = 120;
-  const REPULSION_FORCE = 0.03;
 
-  let width = 0;
-  let height = 0;
-  let dpr = 1;
-  let mouseX = -1000;
-  let mouseY = -1000;
+  // --- Compile shader ---
+  function compileShader(type: number, source: string): WebGLShader | null {
+    const shader = gl!.createShader(type);
+    if (!shader) return null;
+    gl!.shaderSource(shader, source);
+    gl!.compileShader(shader);
+    if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
+      console.error("Shader compile error:", gl!.getShaderInfoLog(shader));
+      gl!.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
 
-  const particles: Particle[] = [];
+  const vs = compileShader(gl.VERTEX_SHADER, VERTEX_SRC);
+  const fs = compileShader(gl.FRAGMENT_SHADER, FRAGMENT_SRC);
+  if (!vs || !fs) return;
+
+  const program = gl.createProgram()!;
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error("Program link error:", gl.getProgramInfoLog(program));
+    return;
+  }
+
+  // --- Geometry: full-screen quad ---
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, 1, -1, -1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+
+  const posAttr = gl.getAttribLocation(program, "position");
+  gl.enableVertexAttribArray(posAttr);
+  gl.vertexAttribPointer(posAttr, 2, gl.FLOAT, false, 0, 0);
+
+  // --- Uniforms ---
+  const uResolution = gl.getUniformLocation(program, "resolution");
+  const uTime = gl.getUniformLocation(program, "time");
+  const uTouch = gl.getUniformLocation(program, "touch");
+  const uPointerCount = gl.getUniformLocation(program, "pointerCount");
+
+  // --- Mouse tracking (window-level, canvas has pointer-events:none) ---
+  let mouseActive = false;
+  let mouseX = 0;
+  let mouseY = 0;
+  let dpr = Math.max(1, 0.5 * window.devicePixelRatio);
 
   function resize(): void {
-    dpr = window.devicePixelRatio || 1;
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas!.width = width * dpr;
-    canvas!.height = height * dpr;
-    ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function createParticle(): Particle {
-    return {
-      x: Math.random() * width,
-      y: Math.random() * height,
-      vx: 0,
-      vy: 0,
-      age: 0,
-      life: 200 + Math.random() * 100,
-    };
-  }
-
-  function resetParticle(p: Particle): void {
-    p.x = Math.random() * width;
-    p.y = Math.random() * height;
-    p.vx = 0;
-    p.vy = 0;
-    p.age = 0;
-    p.life = 200 + Math.random() * 100;
+    dpr = Math.max(1, 0.5 * window.devicePixelRatio);
+    canvas!.width = window.innerWidth * dpr;
+    canvas!.height = window.innerHeight * dpr;
+    gl!.viewport(0, 0, canvas!.width, canvas!.height);
   }
 
   resize();
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    const p = createParticle();
-    p.age = Math.random() * p.life; // stagger initial ages
-    particles.push(p);
-  }
-
   window.addEventListener("resize", resize);
 
   if (!reducedMotion) {
-    window.addEventListener("mousemove", (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+    window.addEventListener("mousemove", (e) => {
+      mouseActive = true;
+      mouseX = e.clientX * dpr;
+      mouseY = e.clientY * dpr;
     });
     window.addEventListener("mouseleave", () => {
-      mouseX = -1000;
-      mouseY = -1000;
+      mouseActive = false;
     });
   }
 
-  function animate(): void {
-    // Trail effect — don't fully clear each frame
-    ctx!.fillStyle = "rgba(10, 10, 15, 0.15)";
-    ctx!.fillRect(0, 0, width, height);
+  // --- Render ---
+  function render(now: number): void {
+    gl!.clearColor(0, 0, 0, 1);
+    gl!.clear(gl!.COLOR_BUFFER_BIT);
+    gl!.useProgram(program);
+    gl!.bindBuffer(gl!.ARRAY_BUFFER, buffer);
 
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
+    gl!.uniform2f(uResolution, canvas!.width, canvas!.height);
+    gl!.uniform1f(uTime, now * 1e-3);
+    gl!.uniform2f(uTouch, mouseX, mouseY);
+    gl!.uniform1i(uPointerCount, mouseActive ? 1 : 0);
 
-      // Flow field
-      const angle = (Math.cos(p.x * 0.003) + Math.sin(p.y * 0.003)) * Math.PI;
-      p.vx += Math.cos(angle) * SPEED;
-      p.vy += Math.sin(angle) * SPEED;
+    gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
 
-      // Mouse repulsion
-      if (!reducedMotion) {
-        const dx = p.x - mouseX;
-        const dy = p.y - mouseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < REPULSION_RADIUS && dist > 0) {
-          const force = (REPULSION_RADIUS - dist) / REPULSION_RADIUS;
-          p.vx += (dx / dist) * force * REPULSION_FORCE;
-          p.vy += (dy / dist) * force * REPULSION_FORCE;
-        }
-      }
-
-      // Friction
-      p.vx *= FRICTION;
-      p.vy *= FRICTION;
-
-      // Move
-      p.x += p.vx;
-      p.y += p.vy;
-
-      // Wrap edges
-      if (p.x < 0) p.x += width;
-      if (p.x > width) p.x -= width;
-      if (p.y < 0) p.y += height;
-      if (p.y > height) p.y -= height;
-
-      // Age
-      p.age++;
-      if (p.age >= p.life) {
-        resetParticle(p);
-        continue;
-      }
-
-      // Opacity: fade in and out
-      const alpha = Math.min((1 - Math.abs((p.age / p.life) - 0.5) * 2) * MAX_ALPHA, MAX_ALPHA);
-      if (alpha <= 0) continue;
-
-      ctx!.fillStyle = `rgba(239, 68, 68, ${alpha})`;
-      ctx!.fillRect(p.x, p.y, 1, 1);
+    if (!reducedMotion) {
+      requestAnimationFrame(render);
     }
-
-    requestAnimationFrame(animate);
   }
 
-  requestAnimationFrame(animate);
+  if (reducedMotion) {
+    // Render a single static frame for the warm texture
+    render(0);
+  } else {
+    requestAnimationFrame(render);
+  }
 }
