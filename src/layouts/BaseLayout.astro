@@ -1,0 +1,61 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Personal portfolio of 7EREK" } = Astro.props;
+
+import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+
+    <link
+      rel="preload"
+      href="/fonts/inter-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="https://7erek.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://7erek.com/" />
+    <meta name="theme-color" content="#0A0A0F" />
+    <noscript>
+      <style>
+        .gsap-reveal,
+        .gsap-timeline-line {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
+  </head>
+  <body>
+    <Navbar />
+    <slot />
+    <script>
+      import "../scripts/animations";
+    </script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* --- Font Faces --- */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-variable.woff2") format("woff2");
+}
+
+/* --- Design Tokens --- */
+
+:root {
+  --bg-base: #0a0a0f;
+  --bg-surface: #12121a;
+  --accent: #3b82f6;
+  --accent-glow: rgba(59, 130, 246, 0.15);
+  --text-primary: #f1f1f3;
+  --text-secondary: #9ca3af;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --glass-bg: rgba(18, 18, 26, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.05);
+}
+
+/* --- Tailwind Theme --- */
+
+@theme {
+  --color-bg-base: #0a0a0f;
+  --color-bg-surface: #12121a;
+  --color-accent: #3b82f6;
+  --color-accent-glow: rgba(59, 130, 246, 0.15);
+  --color-text-primary: #f1f1f3;
+  --color-text-muted: #9ca3af;
+  --color-glass-bg: rgba(18, 18, 26, 0.6);
+  --color-glass-border: rgba(255, 255, 255, 0.05);
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* --- Base Styles (in Tailwind's base layer so utilities win) --- */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* --- GSAP Animation Base --- */
+
+.gsap-reveal {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.gsap-timeline-line {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+/* --- Reduced Motion --- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

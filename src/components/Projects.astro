@@ -1,0 +1,30 @@
+---
+import { projects } from "../data/projects";
+---
+
+<section id="projects" class="px-6 py-32">
+  <div class="mx-auto max-w-6xl">
+    <h2 data-reveal class="gsap-reveal mb-12 text-[2rem] font-semibold text-text-primary">Projects</h2>
+    <div class="flex flex-col gap-16">
+      {projects.map((project) => (
+        <article data-reveal class="gsap-reveal">
+          {project.url !== "#" ? (
+            <a href={project.url} target="_blank" rel="noopener noreferrer" class="text-xl font-semibold text-text-primary transition-colors duration-200 hover:text-accent">
+              {project.title}
+            </a>
+          ) : (
+            <h3 class="text-xl font-semibold text-text-primary">{project.title}</h3>
+          )}
+          <p class="mt-2 max-w-[560px] leading-relaxed text-text-muted">
+            {project.description}
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {project.tech.map((tag) => (
+              <span class="text-xs uppercase tracking-widest text-accent">{tag}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

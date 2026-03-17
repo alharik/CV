@@ -1,0 +1,27 @@
+---
+import { experience } from "../data/experience";
+---
+
+<section id="experience" class="px-6 py-32">
+  <div class="mx-auto max-w-6xl">
+    <h2 data-reveal class="gsap-reveal mb-12 text-[2rem] font-semibold text-text-primary">Experience</h2>
+    <div class="relative">
+      <!-- Vertical line -->
+      <div data-timeline-line class="gsap-timeline-line absolute bottom-0 left-[3px] top-0 hidden w-px bg-text-muted/20 md:block"></div>
+
+      <!-- Entries -->
+      <div class="flex flex-col gap-12 md:pl-10">
+        {experience.map((entry) => (
+          <div data-timeline-entry class="gsap-reveal relative">
+            <!-- Dot -->
+            <div data-timeline-dot class="gsap-reveal absolute -left-10 top-1 hidden h-2 w-2 rounded-full bg-accent md:block"></div>
+            <span class="text-sm text-text-muted">{entry.period}</span>
+            <h3 class="mt-1 font-semibold text-text-primary">{entry.company}</h3>
+            <span class="text-sm text-accent">{entry.role}</span>
+            <p class="mt-2 text-sm leading-relaxed text-text-muted">{entry.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,42 @@
+<nav id="navbar" aria-label="Main navigation" class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+    <a href="#" class="font-mono text-lg font-normal text-text-primary tracking-tight">
+      7EREK
+    </a>
+    <ul class="flex items-center gap-4 md:gap-8 list-none">
+      <li><a href="#about" class="text-sm md:text-base text-text-muted hover:text-text-primary transition-colors duration-200">About</a></li>
+      <li><a href="#experience" class="text-sm md:text-base text-text-muted hover:text-text-primary transition-colors duration-200">Experience</a></li>
+      <li><a href="#projects" class="text-sm md:text-base text-text-muted hover:text-text-primary transition-colors duration-200">Projects</a></li>
+      <li><a href="#contact" class="text-sm md:text-base text-text-muted hover:text-text-primary transition-colors duration-200">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<style is:global>
+  #navbar {
+    border-bottom: 1px solid transparent;
+  }
+
+  #navbar.navbar-scrolled {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom-color: var(--glass-border);
+  }
+</style>
+
+<script>
+  const navbar = document.getElementById("navbar");
+  const SCROLL_THRESHOLD = 50;
+
+  function onScroll() {
+    if (window.scrollY > SCROLL_THRESHOLD) {
+      navbar?.classList.add("navbar-scrolled");
+    } else {
+      navbar?.classList.remove("navbar-scrolled");
+    }
+  }
+
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+</script>
