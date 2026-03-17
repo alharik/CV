@@ -24,29 +24,27 @@ class Particle {
     const dy = this.y - mouseY;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    // Repulsion from mouse
-    if (dist < 120) {
+    // Repulsion from mouse (capped force to prevent explosion on direct touch)
+    if (dist < 120 && dist > 1) {
       const force = (120 - dist) / 120;
       const angle = Math.atan2(dy, dx);
-      this.vx += Math.cos(angle) * force * 15;
-      this.vy += Math.sin(angle) * force * 15;
+      const strength = Math.min(force * 8, 5);
+      this.vx += Math.cos(angle) * strength;
+      this.vy += Math.sin(angle) * strength;
     }
 
     // Return force toward origin
-    this.vx += (this.originX - this.x) * 0.08;
-    this.vy += (this.originY - this.y) * 0.08;
+    this.vx += (this.originX - this.x) * 0.06;
+    this.vy += (this.originY - this.y) * 0.06;
 
     // Damping
-    this.vx *= 0.85;
-    this.vy *= 0.85;
+    this.vx *= 0.88;
+    this.vy *= 0.88;
 
-    // Organic jitter when settled near origin
-    const distToOrigin = Math.abs(this.x - this.originX) + Math.abs(this.y - this.originY);
-    if (distToOrigin < 1 && Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
-      if (Math.random() < 0.05) {
-        this.vx += (Math.random() - 0.5) * 0.2;
-        this.vy += (Math.random() - 0.5) * 0.2;
-      }
+    // Organic jitter — always alive
+    if (Math.random() < 0.15) {
+      this.vx += (Math.random() - 0.5) * 0.4;
+      this.vy += (Math.random() - 0.5) * 0.4;
     }
 
     this.x += this.vx;
@@ -154,10 +152,13 @@ export function initParticleText(canvas: HTMLCanvasElement): () => void {
     mouseY = -1000;
   }
 
-  // Touch handlers
+  // Touch handlers — fade out influence instead of instant reset
+  let touchFadeTimer: ReturnType<typeof setTimeout> | null = null;
+
   function onTouchStart(e: TouchEvent) {
     const touch = e.touches[0];
     if (!touch) return;
+    if (touchFadeTimer) { clearTimeout(touchFadeTimer); touchFadeTimer = null; }
     const rect = canvas.getBoundingClientRect();
     mouseX = touch.clientX - rect.left;
     mouseY = touch.clientY - rect.top;
@@ -172,19 +173,40 @@ export function initParticleText(canvas: HTMLCanvasElement): () => void {
   }
 
   function onTouchEnd() {
-    mouseX = -1000;
-    mouseY = -1000;
+    // Delay clearing so the repulsion fades naturally via damping
+    touchFadeTimer = setTimeout(() => {
+      mouseX = -1000;
+      mouseY = -1000;
+      touchFadeTimer = null;
+    }, 300);
   }
 
-  // Resize via ResizeObserver
+  // Resize via ResizeObserver — debounced to prevent touch-triggered resets
+  let lastWidth = 0;
+  let lastHeight = 0;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+
   const observer = new ResizeObserver(() => {
-    cancelAnimationFrame(animId);
-    setup();
-    animId = requestAnimationFrame(animate);
+    const container = canvas.parentElement!;
+    const w = container.clientWidth;
+    const h = container.clientHeight;
+    // Only re-setup if dimensions actually changed significantly
+    if (Math.abs(w - lastWidth) < 10 && Math.abs(h - lastHeight) < 10) return;
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      lastWidth = w;
+      lastHeight = h;
+      cancelAnimationFrame(animId);
+      setup();
+      animId = requestAnimationFrame(animate);
+    }, 150);
   });
 
   // Init
   setup();
+  const initContainer = canvas.parentElement!;
+  lastWidth = initContainer.clientWidth;
+  lastHeight = initContainer.clientHeight;
   animId = requestAnimationFrame(animate);
 
   canvas.addEventListener("mousemove", onMouseMove, { passive: true });
