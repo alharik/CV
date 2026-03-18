@@ -9,7 +9,8 @@
     <div class="flex items-center justify-center">
       <canvas
         id="globe-canvas"
-        class="h-[500px] w-[500px] cursor-grab active:cursor-grabbing sm:h-[600px] sm:w-[600px] md:h-[720px] md:w-[720px]"
+        class="aspect-square w-full max-w-[720px] cursor-grab active:cursor-grabbing"
+        style="touch-action: pan-y;"
       ></canvas>
     </div>
   </div>

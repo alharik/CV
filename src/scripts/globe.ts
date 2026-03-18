@@ -1,7 +1,6 @@
 // Interactive 3D Globe — Canvas 2D renderer
 // Tech Stack skills as markers on a rotating sphere.
-// Physics ported faithfully from the original React canvas globe component,
-// with momentum inertia added on top.
+// Mobile-optimized: scroll passthrough, adaptive dot count, label scaling.
 
 interface Marker {
   lat: number;
@@ -14,7 +13,7 @@ interface Connection {
   to: [number, number];
 }
 
-// ── Tech Stack markers spread evenly across the globe ──
+// ── Tech Stack markers ──
 
 const TECH_MARKERS: Marker[] = [
   // Content Production (northern latitudes)
@@ -51,37 +50,30 @@ const TECH_MARKERS: Marker[] = [
   { lat: -38, lng: 175, label: "Git" },
 ];
 
-// ── Connections between related skills ──
+// ── Connections ──
 
 const TECH_CONNECTIONS: Connection[] = [
-  // Dev relationships
-  { from: [-33, -140], to: [-40, -65] },     // TypeScript ↔ Astro
-  { from: [-40, -65], to: [-28, -15] },      // Astro ↔ Tailwind CSS
-  { from: [-33, -140], to: [-45, 45] },      // TypeScript ↔ Rust
-  { from: [-45, 45], to: [-50, 95] },        // Rust ↔ WebAssembly
-  { from: [-55, 135], to: [-40, -65] },      // Vercel ↔ Astro
-  { from: [-55, 135], to: [-60, -170] },     // Vercel ↔ Cloudflare
-  { from: [-38, 175], to: [-33, -140] },     // Git ↔ TypeScript
-
-  // Music relationships
-  { from: [-3, -100], to: [-18, 105] },      // FL Studio ↔ Original Soundtracks
-  { from: [-3, -100], to: [2, 165] },        // FL Studio ↔ DistroKid
-  { from: [-14, -35], to: [-8, 35] },        // SM7B ↔ Audient iD4
-
-  // Platform relationships
-  { from: [28, -145], to: [22, -55] },       // TikTok ↔ Instagram Reels
-  { from: [28, -145], to: [15, -5] },        // TikTok ↔ YouTube Shorts
-  { from: [32, 75], to: [12, 125] },         // Algorithm Research ↔ Hashtag Strategy
-  { from: [35, 170], to: [32, 75] },         // SEO ↔ Algorithm Research
-
-  // Content relationships
-  { from: [62, -120], to: [52, -70] },       // CapCut ↔ Captions App
-  { from: [62, -120], to: [28, -145] },      // CapCut ↔ TikTok
-  { from: [64, 100], to: [50, 150] },        // Scripting ↔ On-Camera Presenting
-  { from: [58, 15], to: [45, 55] },          // iPhone Filming ↔ Gimbal Operation
+  { from: [-33, -140], to: [-40, -65] },
+  { from: [-40, -65], to: [-28, -15] },
+  { from: [-33, -140], to: [-45, 45] },
+  { from: [-45, 45], to: [-50, 95] },
+  { from: [-55, 135], to: [-40, -65] },
+  { from: [-55, 135], to: [-60, -170] },
+  { from: [-38, 175], to: [-33, -140] },
+  { from: [-3, -100], to: [-18, 105] },
+  { from: [-3, -100], to: [2, 165] },
+  { from: [-14, -35], to: [-8, 35] },
+  { from: [28, -145], to: [22, -55] },
+  { from: [28, -145], to: [15, -5] },
+  { from: [32, 75], to: [12, 125] },
+  { from: [35, 170], to: [32, 75] },
+  { from: [62, -120], to: [52, -70] },
+  { from: [62, -120], to: [28, -145] },
+  { from: [64, 100], to: [50, 150] },
+  { from: [58, 15], to: [45, 55] },
 ];
 
-// ── Math (matches original exactly) ──
+// ── Math ──
 
 function latLngToXYZ(lat: number, lng: number, r: number): [number, number, number] {
   const phi = ((90 - lat) * Math.PI) / 180;
@@ -93,36 +85,32 @@ function latLngToXYZ(lat: number, lng: number, r: number): [number, number, numb
   ];
 }
 
-function rotateY(x: number, y: number, z: number, a: number): [number, number, number] {
+function rotY(x: number, y: number, z: number, a: number): [number, number, number] {
   const c = Math.cos(a), s = Math.sin(a);
   return [x * c + z * s, y, -x * s + z * c];
 }
 
-function rotateX(x: number, y: number, z: number, a: number): [number, number, number] {
+function rotX(x: number, y: number, z: number, a: number): [number, number, number] {
   const c = Math.cos(a), s = Math.sin(a);
   return [x, y * c - z * s, y * s + z * c];
 }
 
-function project(x: number, y: number, z: number, cx: number, cy: number, fov: number): [number, number] {
-  const scale = fov / (fov + z);
-  return [x * scale + cx, y * scale + cy];
+function proj(x: number, y: number, z: number, cx: number, cy: number, fov: number): [number, number] {
+  const s = fov / (fov + z);
+  return [x * s + cx, y * s + cy];
 }
 
 // ── Fibonacci sphere ──
 
-function generateDots(count: number): [number, number, number][] {
-  const dots: [number, number, number][] = [];
+function makeDots(n: number): [number, number, number][] {
+  const d: [number, number, number][] = [];
   const gr = (1 + Math.sqrt(5)) / 2;
-  for (let i = 0; i < count; i++) {
-    const theta = (2 * Math.PI * i) / gr;
-    const phi = Math.acos(1 - (2 * (i + 0.5)) / count);
-    dots.push([
-      Math.cos(theta) * Math.sin(phi),
-      Math.cos(phi),
-      Math.sin(theta) * Math.sin(phi),
-    ]);
+  for (let i = 0; i < n; i++) {
+    const t = (2 * Math.PI * i) / gr;
+    const p = Math.acos(1 - (2 * (i + 0.5)) / n);
+    d.push([Math.cos(t) * Math.sin(p), Math.cos(p), Math.sin(t) * Math.sin(p)]);
   }
-  return dots;
+  return d;
 }
 
 // ── Init ──
@@ -133,35 +121,38 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
 
   const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  // Physics state
-  let rotYVal = 0.4;
-  let rotXVal = 0.3;
-  let velY = 0;
-  let velX = 0;
+  // Physics
+  let rY = 0.4;
+  let rX = 0.3;
+  let vY = 0;
+  let vX = 0;
   let time = 0;
   let animId = 0;
 
   // Drag
   let dragging = false;
-  let dragOriginX = 0;
-  let dragOriginY = 0;
-  let dragRotY0 = 0;
-  let dragRotX0 = 0;
-  let prevPtrX = 0;
-  let prevPtrY = 0;
-  let prevPtrT = 0;
+  let gestureDecided = false;   // have we decided scroll vs rotate?
+  let gestureIsRotate = false;  // true = rotating globe, false = scrolling page
+  let dOriginX = 0;
+  let dOriginY = 0;
+  let dRotY0 = 0;
+  let dRotX0 = 0;
+  let prevX = 0;
+  let prevY = 0;
 
   // Tuning
-  const AUTO_SPEED = 0.002;
-  const DRAG_SENS = 0.005;
+  const SENS = 0.005;
   const FRICTION = 0.95;
-  const VEL_FLOOR = 0.0001;
-  const VEL_CAP_Y = 0.06;
-  const VEL_CAP_X = 0.03;
-  const EWMA = 0.3; // smoothing factor for velocity (0 = no update, 1 = instant)
+  const EWMA = 0.3;
+  const GESTURE_THRESHOLD = 8; // px before deciding scroll vs rotate
 
-  // Dots
-  const dots = generateDots(1200);
+  // Adaptive dot count: fewer on small screens for perf
+  let lastW = 0;
+  let dots = makeDots(1200);
+
+  // Track canvas size to avoid re-allocating every frame
+  let bufW = 0;
+  let bufH = 0;
 
   function draw() {
     if (!ctx) return;
@@ -170,153 +161,166 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
 
-    // Resize backing store (matches original pattern)
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    ctx.scale(dpr, dpr);
+    // Resize backing store only when dimensions change
+    const targetW = Math.round(w * dpr);
+    const targetH = Math.round(h * dpr);
+    if (bufW !== targetW || bufH !== targetH) {
+      canvas.width = targetW;
+      canvas.height = targetH;
+      bufW = targetW;
+      bufH = targetH;
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Rebuild dots if screen size category changed
+    if (w !== lastW) {
+      const count = w < 400 ? 600 : w < 600 ? 900 : 1200;
+      if (dots.length !== count) dots = makeDots(count);
+      lastW = w;
+    }
 
     const cx = w / 2;
     const cy = h / 2;
     const radius = Math.min(w, h) * 0.42;
-
-    // FOV scales with radius to keep perspective ratio constant.
-    // Original: fov=600, radius≈228 → ratio 2.63
     const fov = radius * 2.63;
+    const isSmall = w < 400;
 
-    // ── Physics tick ──
+    // Physics tick
     if (!dragging) {
-      if (Math.abs(velY) > VEL_FLOOR || Math.abs(velX) > VEL_FLOOR) {
-        rotYVal += velY;
-        rotXVal += velX;
-        rotXVal = Math.max(-1, Math.min(1, rotXVal));
-        velY *= FRICTION;
-        velX *= FRICTION;
-        if (Math.abs(velY) < VEL_FLOOR) velY = 0;
-        if (Math.abs(velX) < VEL_FLOOR) velX = 0;
+      if (Math.abs(vY) > 0.0001 || Math.abs(vX) > 0.0001) {
+        rY += vY;
+        rX += vX;
+        rX = Math.max(-1, Math.min(1, rX));
+        vY *= FRICTION;
+        vX *= FRICTION;
+        if (Math.abs(vY) < 0.0001) vY = 0;
+        if (Math.abs(vX) < 0.0001) vX = 0;
       } else {
-        rotYVal += AUTO_SPEED;
+        rY += 0.002;
       }
     }
 
     time += 0.015;
     ctx.clearRect(0, 0, w, h);
 
-    // ── Globe ring ──
+    // Globe ring
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(239, 68, 68, 0.06)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
-    const ry = rotYVal;
-    const rx = rotXVal;
+    const ry = rY;
+    const rx = rX;
 
     // ── Fibonacci dots ──
     for (let i = 0; i < dots.length; i++) {
       let [x, y, z] = dots[i];
       x *= radius; y *= radius; z *= radius;
-      [x, y, z] = rotateX(x, y, z, rx);
-      [x, y, z] = rotateY(x, y, z, ry);
+      [x, y, z] = rotX(x, y, z, rx);
+      [x, y, z] = rotY(x, y, z, ry);
+      if (z > 0) continue;
 
-      if (z > 0) continue; // back-face cull (exact original threshold)
-
-      const [sx, sy] = project(x, y, z, cx, cy, fov);
-      const alpha = Math.max(0.1, 1 - (z + radius) / (2 * radius));
-      const size = 1 + alpha * 0.8;
+      const [sx, sy] = proj(x, y, z, cx, cy, fov);
+      const a = Math.max(0.1, 1 - (z + radius) / (2 * radius));
+      const sz = 1 + a * 0.8;
 
       ctx.beginPath();
-      ctx.arc(sx, sy, size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(239, 68, 68, ${alpha.toFixed(2)})`;
+      ctx.arc(sx, sy, sz, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(239,68,68,${a.toFixed(2)})`;
       ctx.fill();
     }
 
-    // ── Arc connections ──
+    // ── Arcs ──
     for (const conn of TECH_CONNECTIONS) {
-      const [lat1, lng1] = conn.from;
-      const [lat2, lng2] = conn.to;
+      const [la1, ln1] = conn.from;
+      const [la2, ln2] = conn.to;
 
-      let [x1, y1, z1] = latLngToXYZ(lat1, lng1, radius);
-      let [x2, y2, z2] = latLngToXYZ(lat2, lng2, radius);
-      [x1, y1, z1] = rotateX(x1, y1, z1, rx);
-      [x1, y1, z1] = rotateY(x1, y1, z1, ry);
-      [x2, y2, z2] = rotateX(x2, y2, z2, rx);
-      [x2, y2, z2] = rotateY(x2, y2, z2, ry);
+      let [x1, y1, z1] = latLngToXYZ(la1, ln1, radius);
+      let [x2, y2, z2] = latLngToXYZ(la2, ln2, radius);
+      [x1, y1, z1] = rotX(x1, y1, z1, rx);
+      [x1, y1, z1] = rotY(x1, y1, z1, ry);
+      [x2, y2, z2] = rotX(x2, y2, z2, rx);
+      [x2, y2, z2] = rotY(x2, y2, z2, ry);
 
-      // Original threshold: skip if BOTH behind
       if (z1 > radius * 0.3 && z2 > radius * 0.3) continue;
 
-      const [sx1, sy1] = project(x1, y1, z1, cx, cy, fov);
-      const [sx2, sy2] = project(x2, y2, z2, cx, cy, fov);
+      const [sx1, sy1] = proj(x1, y1, z1, cx, cy, fov);
+      const [sx2, sy2] = proj(x2, y2, z2, cx, cy, fov);
 
-      // Elevated midpoint (original: radius * 1.25)
-      const mx = (x1 + x2) / 2;
-      const my = (y1 + y2) / 2;
-      const mz = (z1 + z2) / 2;
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, mz = (z1 + z2) / 2;
       const ml = Math.sqrt(mx * mx + my * my + mz * mz) || 1;
       const ah = radius * 1.25;
-      const [cpx, cpy] = project(mx / ml * ah, my / ml * ah, mz / ml * ah, cx, cy, fov);
+      const [cpx, cpy] = proj(mx / ml * ah, my / ml * ah, mz / ml * ah, cx, cy, fov);
 
-      // Depth-based alpha so arcs near the edge fade gracefully
       const avgZ = (z1 + z2) / 2;
       const arcA = Math.max(0.06, Math.min(0.5, 0.5 * (1 - avgZ / radius)));
 
       ctx.beginPath();
       ctx.moveTo(sx1, sy1);
       ctx.quadraticCurveTo(cpx, cpy, sx2, sy2);
-      ctx.strokeStyle = `rgba(239, 68, 68, ${arcA.toFixed(2)})`;
+      ctx.strokeStyle = `rgba(239,68,68,${arcA.toFixed(2)})`;
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
-      // Traveling dot along the bezier
-      const t = (Math.sin(time * 1.2 + lat1 * 0.1) + 1) / 2;
+      // Traveling dot
+      const t = (Math.sin(time * 1.2 + la1 * 0.1) + 1) / 2;
       const tx = (1 - t) * (1 - t) * sx1 + 2 * (1 - t) * t * cpx + t * t * sx2;
       const ty = (1 - t) * (1 - t) * sy1 + 2 * (1 - t) * t * cpy + t * t * sy2;
 
       ctx.beginPath();
       ctx.arc(tx, ty, 2, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 140, 120, ${Math.min(1, arcA + 0.3).toFixed(2)})`;
+      ctx.fillStyle = `rgba(255,140,120,${Math.min(1, arcA + 0.3).toFixed(2)})`;
       ctx.fill();
     }
 
-    // ── Skill markers (depth-sorted: back first, front last) ──
-    const visible: { m: Marker; sx: number; sy: number; z: number }[] = [];
+    // ── Markers (depth-sorted) ──
+    const vis: { m: Marker; sx: number; sy: number; z: number }[] = [];
 
     for (const m of TECH_MARKERS) {
       let [x, y, z] = latLngToXYZ(m.lat, m.lng, radius);
-      [x, y, z] = rotateX(x, y, z, rx);
-      [x, y, z] = rotateY(x, y, z, ry);
+      [x, y, z] = rotX(x, y, z, rx);
+      [x, y, z] = rotY(x, y, z, ry);
+      if (z > radius * 0.1) continue;
 
-      if (z > radius * 0.1) continue; // original cull threshold
-
-      const [sx, sy] = project(x, y, z, cx, cy, fov);
-      visible.push({ m, sx, sy, z });
+      const [sx, sy] = proj(x, y, z, cx, cy, fov);
+      vis.push({ m, sx, sy, z });
     }
 
-    visible.sort((a, b) => b.z - a.z); // back-to-front
+    vis.sort((a, b) => b.z - a.z);
 
-    for (const { m, sx, sy, z } of visible) {
-      const depth = Math.max(0.1, 1 - (z + radius) / (2 * radius)); // 0.1 at edge → 1.0 at front
+    // Label font size scales with globe radius
+    const baseFontSize = Math.max(8, Math.min(13, radius * 0.043));
 
-      // Pulse ring (original: 4 + pulse*4)
+    for (const { m, sx, sy, z } of vis) {
+      const depth = Math.max(0.1, 1 - (z + radius) / (2 * radius));
+
+      // Pulse ring
       const pulse = Math.sin(time * 2 + m.lat) * 0.5 + 0.5;
       ctx.beginPath();
       ctx.arc(sx, sy, 4 + pulse * 4, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(239, 68, 68, ${(0.2 + pulse * 0.15).toFixed(2)})`;
+      ctx.strokeStyle = `rgba(239,68,68,${(0.2 + pulse * 0.15).toFixed(2)})`;
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Core dot (original: constant 2.5)
+      // Core dot
       ctx.beginPath();
       ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 140, 120, ${depth.toFixed(2)})`;
+      ctx.fillStyle = `rgba(255,140,120,${depth.toFixed(2)})`;
       ctx.fill();
 
-      // Skill label — white, semibold, depth-faded
+      // Label
       if (m.label) {
-        const fs = Math.round(11 + depth * 2); // 11px at edge, 13px at front
-        ctx.font = `600 ${fs}px "Satoshi", system-ui, sans-serif`;
-        ctx.fillStyle = `rgba(241, 241, 243, ${Math.max(0.25, depth * 0.9).toFixed(2)})`;
-        ctx.fillText(m.label, sx + 8, sy + 3);
+        const fs = Math.round(baseFontSize + depth * 1.5);
+        ctx.font = `600 ${fs}px "Satoshi",system-ui,sans-serif`;
+        ctx.fillStyle = `rgba(241,241,243,${Math.max(0.25, depth * 0.9).toFixed(2)})`;
+
+        // Truncate long labels on small screens
+        let label = m.label;
+        if (isSmall && label.length > 12) label = label.slice(0, 11) + "…";
+
+        ctx.fillText(label, sx + 7, sy + 3);
       }
     }
 
@@ -325,59 +329,90 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
     }
   }
 
-  // ── Pointer handlers ──
+  // ── Pointer handlers with scroll passthrough ──
 
   function onDown(e: PointerEvent) {
     dragging = true;
-    velY = 0;
-    velX = 0;
-    dragOriginX = e.clientX;
-    dragOriginY = e.clientY;
-    dragRotY0 = rotYVal;
-    dragRotX0 = rotXVal;
-    prevPtrX = e.clientX;
-    prevPtrY = e.clientY;
-    prevPtrT = performance.now();
+    gestureDecided = false;
+    gestureIsRotate = false;
+    vY = 0;
+    vX = 0;
+    dOriginX = e.clientX;
+    dOriginY = e.clientY;
+    dRotY0 = rY;
+    dRotX0 = rX;
+    prevX = e.clientX;
+    prevY = e.clientY;
     canvas.setPointerCapture(e.pointerId);
   }
 
   function onMove(e: PointerEvent) {
     if (!dragging) return;
 
-    // Rotation from total drag delta
-    // Y-axis negated: drag right = surface moves right
-    // X-axis positive: drag down = surface moves down
-    const dx = e.clientX - dragOriginX;
-    const dy = e.clientY - dragOriginY;
-    rotYVal = dragRotY0 - dx * DRAG_SENS;
-    rotXVal = Math.max(-1, Math.min(1, dragRotX0 + dy * DRAG_SENS));
+    const dx = e.clientX - dOriginX;
+    const dy = e.clientY - dOriginY;
 
-    // Smooth velocity tracking (EWMA) for momentum on release
-    const instantVY = -(e.clientX - prevPtrX) * DRAG_SENS;
-    const instantVX = (e.clientY - prevPtrY) * DRAG_SENS;
-    velY = velY * (1 - EWMA) + instantVY * EWMA;
-    velX = velX * (1 - EWMA) + instantVX * EWMA;
+    // Gesture detection: wait until the user moves beyond threshold
+    if (!gestureDecided) {
+      const dist = Math.abs(dx) + Math.abs(dy);
+      if (dist < GESTURE_THRESHOLD) return; // too small to decide
 
-    prevPtrX = e.clientX;
-    prevPtrY = e.clientY;
-    prevPtrT = performance.now();
+      // If primarily vertical → let the browser scroll the page
+      if (Math.abs(dy) > Math.abs(dx) * 1.5) {
+        gestureDecided = true;
+        gestureIsRotate = false;
+        dragging = false;
+        try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+        return;
+      }
+
+      // Horizontal or diagonal → rotate the globe
+      gestureDecided = true;
+      gestureIsRotate = true;
+    }
+
+    if (!gestureIsRotate) return;
+
+    // Rotate
+    rY = dRotY0 - dx * SENS;
+    rX = Math.max(-1, Math.min(1, dRotX0 + dy * SENS));
+
+    // EWMA velocity
+    const ivY = -(e.clientX - prevX) * SENS;
+    const ivX = (e.clientY - prevY) * SENS;
+    vY = vY * (1 - EWMA) + ivY * EWMA;
+    vX = vX * (1 - EWMA) + ivX * EWMA;
+
+    prevX = e.clientX;
+    prevY = e.clientY;
   }
 
-  function onUp() {
+  function onUp(e: PointerEvent) {
+    if (!dragging) return;
     dragging = false;
-    // Clamp so it can't fly off
-    velY = Math.max(-VEL_CAP_Y, Math.min(VEL_CAP_Y, velY));
-    velX = Math.max(-VEL_CAP_X, Math.min(VEL_CAP_X, velX));
-    // Kill tiny residual velocity from slow releases
-    if (Math.abs(velY) < 0.001 && Math.abs(velX) < 0.001) {
-      velY = 0;
-      velX = 0;
+    try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+
+    // Clamp momentum
+    vY = Math.max(-0.06, Math.min(0.06, vY));
+    vX = Math.max(-0.03, Math.min(0.03, vX));
+    if (Math.abs(vY) < 0.001 && Math.abs(vX) < 0.001) {
+      vY = 0;
+      vX = 0;
     }
+  }
+
+  function onCancel(e: PointerEvent) {
+    // Pointer stolen by browser (scroll takeover, OS gesture, etc.)
+    dragging = false;
+    gestureDecided = false;
+    vY = 0;
+    vX = 0;
   }
 
   canvas.addEventListener("pointerdown", onDown);
   canvas.addEventListener("pointermove", onMove);
   canvas.addEventListener("pointerup", onUp);
+  canvas.addEventListener("pointercancel", onCancel);
 
   animId = requestAnimationFrame(draw);
   if (prefersReduced) draw();
@@ -387,5 +422,6 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
     canvas.removeEventListener("pointerdown", onDown);
     canvas.removeEventListener("pointermove", onMove);
     canvas.removeEventListener("pointerup", onUp);
+    canvas.removeEventListener("pointercancel", onCancel);
   };
 }
