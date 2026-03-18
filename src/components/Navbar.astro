@@ -1,8 +1,23 @@
 <nav id="navbar" aria-label="Main navigation" class="fixed top-0 left-0 z-50 w-full transition-all duration-500">
   <div class="navbar-inner mx-auto mt-4 flex max-w-fit items-center justify-center gap-1 rounded-xl px-2 py-2 transition-all duration-500">
-    <a href="#about" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">About</a>
-    <a href="#projects" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">Work</a>
-    <a href="#cta" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">Contact</a>
+    <a href="#about" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">
+      About
+      <svg class="squiggly" width="37" height="8" viewBox="0 0 37 8" fill="none">
+        <path d="M1 5.39971C7.48565 -1.08593 6.44837 -0.12827 8.33643 6.47992C8.34809 6.52075 11.6019 2.72875 12.3422 2.33912C13.8991 1.5197 16.6594 2.96924 18.3734 2.96924C21.665 2.96924 23.1972 1.69759 26.745 2.78921C29.7551 3.71539 32.6954 3.7794 35.8368 3.7794" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <a href="#projects" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">
+      Work
+      <svg class="squiggly" width="37" height="8" viewBox="0 0 37 8" fill="none">
+        <path d="M1 5.39971C7.48565 -1.08593 6.44837 -0.12827 8.33643 6.47992C8.34809 6.52075 11.6019 2.72875 12.3422 2.33912C13.8991 1.5197 16.6594 2.96924 18.3734 2.96924C21.665 2.96924 23.1972 1.69759 26.745 2.78921C29.7551 3.71539 32.6954 3.7794 35.8368 3.7794" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <a href="#cta" class="nav-link rounded-lg px-4 py-2 text-sm text-text-muted transition-all duration-200 hover:text-text-primary">
+      Contact
+      <svg class="squiggly" width="37" height="8" viewBox="0 0 37 8" fill="none">
+        <path d="M1 5.39971C7.48565 -1.08593 6.44837 -0.12827 8.33643 6.47992C8.34809 6.52075 11.6019 2.72875 12.3422 2.33912C13.8991 1.5197 16.6594 2.96924 18.3734 2.96924C21.665 2.96924 23.1972 1.69759 26.745 2.78921C29.7551 3.71539 32.6954 3.7794 35.8368 3.7794" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
   </div>
 </nav>
 
@@ -31,32 +46,43 @@
 
   .nav-link {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .nav-link:hover {
     background: rgba(255, 255, 255, 0.04);
   }
 
-  .nav-link::after {
-    content: "";
+  /* Squiggly underline SVG */
+  .squiggly {
     position: absolute;
-    bottom: 6px;
+    bottom: 4px;
     left: 50%;
-    width: 0;
-    height: 1px;
-    background: var(--accent);
-    transition: width 0.3s ease, left 0.3s ease;
+    transform: translateX(-50%);
+    width: 37px;
+    height: 8px;
+    color: var(--accent);
+    pointer-events: none;
   }
 
-  .nav-link:hover::after {
-    width: 40%;
-    left: 30%;
+  .squiggly path {
+    stroke-dasharray: 84.21;
+    stroke-dashoffset: 84.21;
+    transition: stroke-dashoffset 0.5s ease;
+  }
+
+  .nav-link:hover .squiggly path,
+  .nav-link.nav-active .squiggly path {
+    stroke-dashoffset: 0;
   }
 </style>
 
 <script>
   const navbar = document.getElementById("navbar");
   const navInner = document.querySelector(".navbar-inner");
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>(".nav-link");
   const SCROLL_THRESHOLD = 50;
 
   // Animate in on load
@@ -73,6 +99,27 @@
       navbar?.classList.remove("navbar-scrolled");
     }
   }
+
+  // Track active section via IntersectionObserver
+  const sections = document.querySelectorAll<HTMLElement>("section[id]");
+  const observerOptions = { rootMargin: "-40% 0px -55% 0px" };
+
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href") === `#${id}`) {
+            link.classList.add("nav-active");
+          } else {
+            link.classList.remove("nav-active");
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach((section) => sectionObserver.observe(section));
 
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
