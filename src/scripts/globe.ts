@@ -1,5 +1,5 @@
 // Interactive 3D Globe — Canvas 2D renderer
-// Vanilla TypeScript port (no React). All physics preserved from original.
+// Tech Stack skills as markers on a rotating sphere with physics-based interaction.
 
 interface Marker {
   lat: number;
@@ -12,32 +12,74 @@ interface Connection {
   to: [number, number];
 }
 
-const DEFAULT_MARKERS: Marker[] = [
-  { lat: 37.78, lng: -122.42, label: "San Francisco" },
-  { lat: 51.51, lng: -0.13, label: "London" },
-  { lat: 35.68, lng: 139.69, label: "Tokyo" },
-  { lat: -33.87, lng: 151.21, label: "Sydney" },
-  { lat: 1.35, lng: 103.82, label: "Singapore" },
-  { lat: 55.76, lng: 37.62, label: "Moscow" },
-  { lat: -23.55, lng: -46.63, label: "São Paulo" },
-  { lat: 19.43, lng: -99.13, label: "Mexico City" },
-  { lat: 28.61, lng: 77.21, label: "Delhi" },
-  { lat: 36.19, lng: 44.01, label: "Erbil" },
+// ── Tech Stack markers spread evenly across the globe ──
+
+const TECH_MARKERS: Marker[] = [
+  // Content Production (northern latitudes, spread across longitudes)
+  { lat: 62, lng: -120, label: "CapCut" },
+  { lat: 52, lng: -70, label: "Captions App" },
+  { lat: 58, lng: 15, label: "iPhone Filming" },
+  { lat: 45, lng: 55, label: "Gimbal Operation" },
+  { lat: 64, lng: 100, label: "Scripting" },
+  { lat: 50, lng: 150, label: "On-Camera Presenting" },
+
+  // Platforms & Strategy (tropical band)
+  { lat: 28, lng: -145, label: "TikTok" },
+  { lat: 22, lng: -55, label: "Instagram Reels" },
+  { lat: 15, lng: -5, label: "YouTube Shorts" },
+  { lat: 32, lng: 75, label: "Algorithm Research" },
+  { lat: 12, lng: 125, label: "Hashtag Strategy" },
+  { lat: 35, lng: 170, label: "SEO" },
+
+  // Music & Audio (equatorial band)
+  { lat: -3, lng: -100, label: "FL Studio" },
+  { lat: -14, lng: -35, label: "SM7B" },
+  { lat: -8, lng: 35, label: "Audient iD4" },
+  { lat: -18, lng: 105, label: "Original Soundtracks" },
+  { lat: 2, lng: 165, label: "DistroKid" },
+
+  // Development & Tools (southern latitudes)
+  { lat: -33, lng: -140, label: "TypeScript" },
+  { lat: -40, lng: -65, label: "Astro" },
+  { lat: -28, lng: -15, label: "Tailwind CSS" },
+  { lat: -45, lng: 45, label: "Rust" },
+  { lat: -50, lng: 95, label: "WebAssembly" },
+  { lat: -55, lng: 135, label: "Vercel" },
+  { lat: -60, lng: -170, label: "Cloudflare" },
+  { lat: -38, lng: 175, label: "Git" },
 ];
 
-const DEFAULT_CONNECTIONS: Connection[] = [
-  { from: [37.78, -122.42], to: [51.51, -0.13] },
-  { from: [51.51, -0.13], to: [35.68, 139.69] },
-  { from: [35.68, 139.69], to: [-33.87, 151.21] },
-  { from: [37.78, -122.42], to: [1.35, 103.82] },
-  { from: [51.51, -0.13], to: [28.61, 77.21] },
-  { from: [37.78, -122.42], to: [-23.55, -46.63] },
-  { from: [1.35, 103.82], to: [-33.87, 151.21] },
-  { from: [28.61, 77.21], to: [36.19, 44.01] },
-  { from: [51.51, -0.13], to: [36.19, 44.01] },
+// ── Connections between related skills ──
+
+const TECH_CONNECTIONS: Connection[] = [
+  // Dev relationships
+  { from: [-33, -140], to: [-40, -65] },    // TypeScript ↔ Astro
+  { from: [-40, -65], to: [-28, -15] },      // Astro ↔ Tailwind CSS
+  { from: [-33, -140], to: [-45, 45] },      // TypeScript ↔ Rust
+  { from: [-45, 45], to: [-50, 95] },        // Rust ↔ WebAssembly
+  { from: [-55, 135], to: [-40, -65] },      // Vercel ↔ Astro
+  { from: [-55, 135], to: [-60, -170] },     // Vercel ↔ Cloudflare
+  { from: [-38, 175], to: [-33, -140] },     // Git ↔ TypeScript
+
+  // Music relationships
+  { from: [-3, -100], to: [-18, 105] },      // FL Studio ↔ Original Soundtracks
+  { from: [-3, -100], to: [2, 165] },        // FL Studio ↔ DistroKid
+  { from: [-14, -35], to: [-8, 35] },        // SM7B ↔ Audient iD4
+
+  // Platform relationships
+  { from: [28, -145], to: [22, -55] },       // TikTok ↔ Instagram Reels
+  { from: [28, -145], to: [15, -5] },        // TikTok ↔ YouTube Shorts
+  { from: [32, 75], to: [12, 125] },         // Algorithm Research ↔ Hashtag Strategy
+  { from: [35, 170], to: [32, 75] },         // SEO ↔ Algorithm Research
+
+  // Content relationships
+  { from: [62, -120], to: [52, -70] },       // CapCut ↔ Captions App
+  { from: [62, -120], to: [28, -145] },      // CapCut ↔ TikTok
+  { from: [64, 100], to: [50, 150] },        // Scripting ↔ On-Camera Presenting
+  { from: [58, 15], to: [45, 55] },          // iPhone Filming ↔ Gimbal Operation
 ];
 
-// --- Math helpers ---
+// ── Math helpers ──
 
 function latLngToXYZ(lat: number, lng: number, radius: number): [number, number, number] {
   const phi = ((90 - lat) * Math.PI) / 180;
@@ -66,7 +108,7 @@ function project(x: number, y: number, z: number, cx: number, cy: number, fov: n
   return [x * scale + cx, y * scale + cy];
 }
 
-// --- Fibonacci sphere dot generation ---
+// ── Fibonacci sphere dot generation ──
 
 function generateDots(count: number): [number, number, number][] {
   const dots: [number, number, number][] = [];
@@ -83,17 +125,11 @@ function generateDots(count: number): [number, number, number][] {
   return dots;
 }
 
-// --- Globe class ---
+// ── Globe initializer ──
 
-export function initGlobe(
-  canvas: HTMLCanvasElement,
-  options?: {
-    markers?: Marker[];
-    connections?: Connection[];
-  }
-): () => void {
-  const markers = options?.markers ?? DEFAULT_MARKERS;
-  const connections = options?.connections ?? DEFAULT_CONNECTIONS;
+export function initGlobe(canvas: HTMLCanvasElement): () => void {
+  const markers = TECH_MARKERS;
+  const connections = TECH_CONNECTIONS;
 
   const ctx = canvas.getContext("2d");
   if (!ctx) return () => {};
@@ -118,9 +154,9 @@ export function initGlobe(
   const dotColorBase = "rgba(239, 68, 68, "; // #EF4444
   const arcColor = "rgba(239, 68, 68, 0.45)";
   const markerColor = "rgba(255, 130, 110, 1)";
-  const markerColorFaded = (alpha: number) => `rgba(255, 130, 110, ${alpha})`;
+  const markerColorFaded = (a: number) => `rgba(255, 130, 110, ${a})`;
 
-  // Generate dots
+  // Generate Fibonacci sphere grid
   const dots = generateDots(1200);
 
   const autoRotateSpeed = 0.002;
@@ -144,7 +180,7 @@ export function initGlobe(
     const radius = Math.min(w, h) * 0.38;
     const fov = 600;
 
-    // Auto rotate
+    // Auto rotate when idle
     if (!dragActive) {
       rotYVal += autoRotateSpeed;
     }
@@ -160,7 +196,7 @@ export function initGlobe(
     ctx.fillStyle = glowGrad;
     ctx.fillRect(0, 0, w, h);
 
-    // Globe outline
+    // Globe outline ring
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.strokeStyle = "rgba(239, 68, 68, 0.06)";
@@ -170,7 +206,7 @@ export function initGlobe(
     const ry = rotYVal;
     const rx = rotXVal;
 
-    // Draw dots (Fibonacci sphere)
+    // ── Draw Fibonacci dots ──
     for (let i = 0; i < dots.length; i++) {
       let [x, y, z] = dots[i];
       x *= radius;
@@ -192,7 +228,7 @@ export function initGlobe(
       ctx.fill();
     }
 
-    // Draw connections as arcs
+    // ── Draw arc connections between related skills ──
     for (const conn of connections) {
       const [lat1, lng1] = conn.from;
       const [lat2, lng2] = conn.to;
@@ -205,13 +241,13 @@ export function initGlobe(
       [x2, y2, z2] = rotateX(x2, y2, z2, rx);
       [x2, y2, z2] = rotateY(x2, y2, z2, ry);
 
-      // Only draw if both points face camera
+      // Only draw if at least one endpoint faces camera
       if (z1 > radius * 0.3 && z2 > radius * 0.3) continue;
 
       const [sx1, sy1] = project(x1, y1, z1, cx, cy, fov);
       const [sx2, sy2] = project(x2, y2, z2, cx, cy, fov);
 
-      // Elevated midpoint for arc
+      // Elevated midpoint for arc curvature
       const midX = (x1 + x2) / 2;
       const midY = (y1 + y2) / 2;
       const midZ = (z1 + z2) / 2;
@@ -240,35 +276,35 @@ export function initGlobe(
       ctx.fill();
     }
 
-    // Draw markers
+    // ── Draw skill markers with labels ──
     for (const marker of markers) {
       let [x, y, z] = latLngToXYZ(marker.lat, marker.lng, radius);
       [x, y, z] = rotateX(x, y, z, rx);
       [x, y, z] = rotateY(x, y, z, ry);
 
-      if (z > radius * 0.1) continue;
+      if (z > radius * 0.1) continue; // back-face cull
 
       const [sx, sy] = project(x, y, z, cx, cy, fov);
 
       // Pulse ring
       const pulse = Math.sin(time * 2 + marker.lat) * 0.5 + 0.5;
       ctx.beginPath();
-      ctx.arc(sx, sy, 4 + pulse * 4, 0, Math.PI * 2);
+      ctx.arc(sx, sy, 5 + pulse * 4, 0, Math.PI * 2);
       ctx.strokeStyle = markerColorFaded(0.2 + pulse * 0.15);
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      // Core dot
+      // Core dot (slightly larger — these are the content)
       ctx.beginPath();
-      ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
+      ctx.arc(sx, sy, 3, 0, Math.PI * 2);
       ctx.fillStyle = markerColor;
       ctx.fill();
 
-      // Label
+      // Skill label
       if (marker.label) {
-        ctx.font = '10px "Satoshi", system-ui, sans-serif';
-        ctx.fillStyle = markerColorFaded(0.6);
-        ctx.fillText(marker.label, sx + 8, sy + 3);
+        ctx.font = '11px "Satoshi", system-ui, sans-serif';
+        ctx.fillStyle = markerColorFaded(0.75);
+        ctx.fillText(marker.label, sx + 9, sy + 4);
       }
     }
 
@@ -277,7 +313,7 @@ export function initGlobe(
     }
   }
 
-  // --- Pointer event handlers ---
+  // ── Pointer drag handlers ──
 
   function onPointerDown(e: PointerEvent) {
     dragActive = true;
@@ -304,15 +340,15 @@ export function initGlobe(
   canvas.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("pointerup", onPointerUp);
 
-  // Start animation loop
+  // Start
   animId = requestAnimationFrame(draw);
 
-  // If reduced motion, draw one static frame
+  // Single static frame for reduced motion
   if (prefersReduced) {
     draw();
   }
 
-  // Return cleanup function
+  // Cleanup
   return () => {
     cancelAnimationFrame(animId);
     canvas.removeEventListener("pointerdown", onPointerDown);
