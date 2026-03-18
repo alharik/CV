@@ -351,16 +351,17 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
   function onMove(e: PointerEvent) {
     if (!dragging) return;
 
-    // Rotation from total drag delta — negated for direct manipulation
-    // (drag right = surface follows finger right)
+    // Rotation from total drag delta
+    // Y-axis negated: drag right = surface moves right
+    // X-axis positive: drag down = surface moves down
     const dx = e.clientX - dragOriginX;
     const dy = e.clientY - dragOriginY;
     rotYVal = dragRotY0 - dx * DRAG_SENS;
-    rotXVal = Math.max(-1, Math.min(1, dragRotX0 - dy * DRAG_SENS));
+    rotXVal = Math.max(-1, Math.min(1, dragRotX0 + dy * DRAG_SENS));
 
     // Smooth velocity tracking (EWMA) for momentum on release
     const instantVY = -(e.clientX - prevPtrX) * DRAG_SENS;
-    const instantVX = -(e.clientY - prevPtrY) * DRAG_SENS;
+    const instantVX = (e.clientY - prevPtrY) * DRAG_SENS;
     velY = velY * (1 - EWMA) + instantVY * EWMA;
     velX = velX * (1 - EWMA) + instantVX * EWMA;
 
