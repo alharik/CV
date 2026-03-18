@@ -123,8 +123,8 @@ void main(void) {
   float dist = length(vPosition);
   float opacity = (96.0 - dist) / 256.0 * 0.5;
   opacity = clamp(opacity, 0.0, 0.4);
-  // Warm red matching #EF4444
-  vec3 color = vec3(0.94, 0.27, 0.27);
+  // Champagne gold matching #C9A96E
+  vec3 color = vec3(0.79, 0.66, 0.43);
   fragColor = vec4(color, opacity);
 }`;
 
@@ -298,7 +298,7 @@ export function init(): void {
     const aspect = canvas!.width / canvas!.height;
     const projection = perspectiveMatrix(FOV, aspect, NEAR, FAR);
 
-    gl!.clearColor(0.039, 0.039, 0.059, 1); // #0A0A0F
+    gl!.clearColor(0.031, 0.031, 0.051, 1); // #08080D
     gl!.clear(gl!.COLOR_BUFFER_BIT | gl!.DEPTH_BUFFER_BIT);
     gl!.enable(gl!.BLEND);
     gl!.blendFunc(gl!.SRC_ALPHA, gl!.ONE_MINUS_SRC_ALPHA);

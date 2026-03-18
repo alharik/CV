@@ -98,10 +98,10 @@ export function initParticleText(canvas: HTMLCanvasElement): () => void {
     const text = "ALI YASER AL HARIK";
     const maxWidth = w * 0.92;
     let fontSize = Math.min(120, w * 0.12);
-    ctx.font = `bold ${fontSize}px Satoshi, system-ui, sans-serif`;
+    ctx.font = `600 ${fontSize}px "Space Grotesk", system-ui, sans-serif`;
     while (fontSize > 12 && ctx.measureText(text).width > maxWidth) {
       fontSize -= 1;
-      ctx.font = `bold ${fontSize}px Satoshi, system-ui, sans-serif`;
+      ctx.font = `600 ${fontSize}px "Space Grotesk", system-ui, sans-serif`;
     }
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = "#fff";

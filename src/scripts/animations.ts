@@ -21,28 +21,28 @@ if (prefersReducedMotion) {
 
 function initAnimations() {
   // Hero — page load, not scroll
-  const heroTl = gsap.timeline({ delay: 0.2 });
+  const heroTl = gsap.timeline({ delay: 0.4 });
   heroTl
     .to("[data-hero-heading]", {
       opacity: 1,
       y: 0,
-      duration: 1,
-      ease: "power2.out",
+      duration: 1.2,
+      ease: "power3.out",
     })
     .to(
       "[data-hero-subtitle]",
-      { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
-      "-=0.8"
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+      "-=0.7"
     )
     .to(
       "[data-hero-cta]",
-      { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
-      "-=0.8"
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+      "-=0.7"
     )
     .to(
       "[data-hero-video]",
-      { opacity: 1, y: 0, duration: 1, ease: "power2.out" },
-      "-=0.8"
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
+      "-=0.7"
     );
 
   // Generic section reveals — About, Projects, Contact
@@ -54,9 +54,9 @@ function initAnimations() {
     gsap.to(reveals, {
       opacity: 1,
       y: 0,
-      duration: 0.8,
-      ease: "power2.out",
-      stagger: 0.1,
+      duration: 1.0,
+      ease: "power3.out",
+      stagger: 0.12,
       scrollTrigger: { trigger: section, start: "top 85%" },
     });
   });
@@ -65,9 +65,9 @@ function initAnimations() {
   gsap.to("#skills [data-reveal]", {
     opacity: 1,
     y: 0,
-    duration: 0.8,
-    ease: "power2.out",
-    stagger: 0.1,
+    duration: 1.0,
+    ease: "power3.out",
+    stagger: 0.12,
     scrollTrigger: { trigger: "#skills", start: "top 85%" },
   });
 
@@ -75,9 +75,9 @@ function initAnimations() {
   gsap.to("[data-skill-chip]", {
     opacity: 1,
     y: 0,
-    duration: 0.5,
-    ease: "power2.out",
-    stagger: 0.05,
+    duration: 0.6,
+    ease: "power3.out",
+    stagger: 0.06,
     scrollTrigger: { trigger: "#skills", start: "top 85%" },
   });
 }

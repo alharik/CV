@@ -6,45 +6,65 @@
 - GSAP + ScrollTrigger (animations)
 
 ## Design Constraints (STRICT)
-- Dark theme ONLY. Base bg: #0A0A0F
-- ONE accent color: #EF4444 (red) — used sparingly
-- iOS-style frosted glass on all interactive surfaces
-- Whitespace: generous. Sections padded 128px+ vertically
-- Typography: Satoshi + JetBrains Mono only
-- NO gradients (except subtle red glow blobs)
-- NO box shadows
+- Dark theme ONLY. Base bg: #08080D
+- ONE accent color: #C9A96E (champagne gold) — used sparingly
+- iOS-style frosted glass on all interactive surfaces (3 tiers: subtle, base, dense)
+- Whitespace: generous. Sections padded 160px+ vertically
+- Typography: Space Grotesk (headings) + Inter (body) + JetBrains Mono (code)
+- NO gradients (except subtle gold glow blobs)
+- NO box shadows (except inset glass reflections)
 - NO border-radius above 12px
 - NO progress bars for skills
 - NO generic AI aesthetic (no purple-pink gradients, 
   no floating 3D objects)
 
-## Glass Effect Values (iOS-style)
-background: rgba(30, 30, 38, 0.65)
-backdrop-filter: blur(50px) saturate(190%) brightness(1.05)
-border: 0.5px solid rgba(255, 255, 255, 0.12)
-box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.09)
-noise: SVG fractalNoise overlay at 3.5% opacity, mix-blend-mode: overlay
+## Glass Effect Tiers (iOS-style)
+
+### Tier 1: Subtle (navbar, badges)
+background: rgba(16, 16, 22, 0.45)
+backdrop-filter: blur(60px) saturate(180%) brightness(1.03)
+border: 0.5px solid rgba(255, 255, 255, 0.05)
+box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.05)
+
+### Tier 2: Base (cards, containers)
+background: rgba(16, 16, 22, 0.55)
+backdrop-filter: blur(60px) saturate(180%) brightness(1.03)
+border: 0.5px solid rgba(255, 255, 255, 0.06)
+box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.06)
+noise: SVG fractalNoise overlay at 2.5% opacity, mix-blend-mode: overlay
+
+### Tier 3: Dense (lightbox, overlays)
+background: rgba(16, 16, 22, 0.65)
+backdrop-filter: blur(60px) saturate(180%) brightness(1.03)
+border: 0.5px solid rgba(255, 255, 255, 0.08)
+box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.07)
+noise: SVG fractalNoise overlay at 2.5% opacity, mix-blend-mode: overlay
 
 ## Color Tokens
-- --bg-base: #0A0A0F
-- --bg-surface: #12121A
-- --accent: #EF4444
-- --accent-glow: rgba(239, 68, 68, 0.15)
-- --text-primary: #F1F1F3
-- --text-secondary: #9CA3AF (mapped as --color-text-muted in Tailwind @theme)
+- --bg-base: #08080D
+- --bg-surface: #111118
+- --accent: #C9A96E
+- --accent-light: #D4B97A
+- --accent-glow: rgba(201, 169, 110, 0.10)
+- --accent-muted: rgba(201, 169, 110, 0.35)
+- --text-primary: #EBEBED
+- --text-secondary: #787D86 (mapped as --color-text-muted in Tailwind @theme)
 
 ## Typography
-- Headings: Satoshi, weights 600-700
-- Body: Satoshi, weight 400, line-height 1.7
-- Code/Accent: JetBrains Mono, weight 400
-- Hero size: clamp(3rem, 8vw, 6rem)
-- Section heading: 2rem
-- Body: 1.125rem
+- Headings: Space Grotesk, weights 500-600
+- Body: Inter, weight 400, line-height 1.8
+- Code/Accent: JetBrains Mono, weight 400-500
+- Hero size: clamp(3rem, 8vw, 5.5rem)
+- Section heading: 2.25rem, weight 500, tracking -0.02em
+- Body: 1.0625rem (17px)
+- Uppercase labels: 11px, weight 500, tracking 0.15em
 
 ## Animation Rules
 - GSAP + ScrollTrigger only
-- Default reveal: y: 30, opacity: 0, duration: 0.8
-- Stagger: 0.1s between siblings
+- Default reveal: y: 40, opacity: 0, duration: 1.0
+- Stagger: 0.12s between siblings
+- Ease: power3.out (GSAP), cubic-bezier(0.22, 0.61, 0.36, 1) (CSS)
+- Transition baseline: 400-500ms (luxury pace)
 - Respect prefers-reduced-motion: disable all
 
 ## Performance Targets
@@ -56,10 +76,11 @@ noise: SVG fractalNoise overlay at 3.5% opacity, mix-blend-mode: overlay
 ## Code Style
 - Components: one per file, descriptive names
 - Data: separate .ts files (skills.ts, work.ts)
-- No inline styles
+- No inline styles (except transition-timing-function for --ease-luxury)
 - Semantic HTML (nav, main, section, article, footer)
 
 ## Fonts
 - Self-hosted ONLY — no Google Fonts CDN, no external requests
 - Download woff2 variable files to public/fonts/
 - Preload in <head> with font-display: swap
+- Font files: space-grotesk-variable.woff2, inter-variable.woff2, jetbrains-mono-variable.woff2

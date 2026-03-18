@@ -207,7 +207,7 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
     // Globe ring
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = "rgba(239, 68, 68, 0.06)";
+    ctx.strokeStyle = "rgba(201, 169, 110, 0.06)";
     ctx.lineWidth = 1;
     ctx.stroke();
 
@@ -228,7 +228,7 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
 
       ctx.beginPath();
       ctx.arc(sx, sy, sz, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(239,68,68,${a.toFixed(2)})`;
+      ctx.fillStyle = `rgba(201,169,110,${a.toFixed(2)})`;
       ctx.fill();
     }
 
@@ -260,7 +260,7 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
       ctx.beginPath();
       ctx.moveTo(sx1, sy1);
       ctx.quadraticCurveTo(cpx, cpy, sx2, sy2);
-      ctx.strokeStyle = `rgba(239,68,68,${arcA.toFixed(2)})`;
+      ctx.strokeStyle = `rgba(201,169,110,${arcA.toFixed(2)})`;
       ctx.lineWidth = 1.2;
       ctx.stroke();
 
@@ -271,7 +271,7 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
 
       ctx.beginPath();
       ctx.arc(tx, ty, 2, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,140,120,${Math.min(1, arcA + 0.3).toFixed(2)})`;
+      ctx.fillStyle = `rgba(212,185,122,${Math.min(1, arcA + 0.3).toFixed(2)})`;
       ctx.fill();
     }
 
@@ -300,20 +300,20 @@ export function initGlobe(canvas: HTMLCanvasElement): () => void {
       const pulse = Math.sin(time * 2 + m.lat) * 0.5 + 0.5;
       ctx.beginPath();
       ctx.arc(sx, sy, 4 + pulse * 4, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(239,68,68,${(0.2 + pulse * 0.15).toFixed(2)})`;
+      ctx.strokeStyle = `rgba(201,169,110,${(0.2 + pulse * 0.15).toFixed(2)})`;
       ctx.lineWidth = 1;
       ctx.stroke();
 
       // Core dot
       ctx.beginPath();
       ctx.arc(sx, sy, 2.5, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,140,120,${depth.toFixed(2)})`;
+      ctx.fillStyle = `rgba(212,185,122,${depth.toFixed(2)})`;
       ctx.fill();
 
       // Label
       if (m.label) {
         const fs = Math.round(baseFontSize + depth * 1.5);
-        ctx.font = `600 ${fs}px "Satoshi",system-ui,sans-serif`;
+        ctx.font = `600 ${fs}px "Space Grotesk",system-ui,sans-serif`;
         ctx.fillStyle = `rgba(241,241,243,${Math.max(0.25, depth * 0.9).toFixed(2)})`;
 
         // Truncate long labels on small screens

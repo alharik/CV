@@ -16,7 +16,8 @@
       "Bash(curl -L -o \"/c/Users/James Waynn/Desktop/alharikcv/public/fonts/satoshi-variable.woff2\" \"https://cdn.fontshare.com/wf/NWBQYJIM7GCZ5XWD7D26ARB3VDY55ZRT/K63EV2KZIGKLE7RANQ2U42S6SVHU5RJ7/X6XYTKIVDUW7GZTZPZNN4EUM5KH54KHF.woff2\")",
       "Bash(xxd -l 32 \"/c/Users/James Waynn/Desktop/alharikcv/public/hero-video.mp4\")",
       "Bash(npm run:*)",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "Bash(npm i:*)"
     ]
   }
 }

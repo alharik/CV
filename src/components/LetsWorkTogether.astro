@@ -1,10 +1,10 @@
-<section id="cta" class="px-6 py-32">
-  <div class="cta-wrapper mx-auto max-w-6xl text-center">
+<section id="cta" class="px-6 py-40">
+  <div class="cta-wrapper mx-auto max-w-5xl text-center">
 
     <!-- DEFAULT STATE -->
     <div id="cta-default" class="cta-default-state">
       <!-- Availability badge -->
-      <div data-reveal class="gsap-reveal mb-8 inline-flex items-center gap-2">
+      <div data-reveal class="gsap-reveal mb-10 inline-flex items-center gap-2">
         <span class="cta-ping-wrapper">
           <span class="cta-ping-dot"></span>
           <span class="cta-ping-ring"></span>
@@ -13,13 +13,13 @@
       </div>
 
       <!-- Headline -->
-      <h2 data-reveal class="gsap-reveal cta-headline mb-8 text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.1]">
+      <h2 data-reveal class="gsap-reveal cta-headline mb-10 font-heading text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.1] tracking-[-0.02em]">
         <span style="color: var(--text-primary);">Let's work</span><br/>
         <span style="color: var(--text-secondary);">together</span>
       </h2>
 
       <!-- Decorative lines + arrow button -->
-      <div data-reveal class="gsap-reveal cta-trigger-row mb-10 flex items-center justify-center gap-6">
+      <div data-reveal class="gsap-reveal cta-trigger-row mb-14 flex items-center justify-center gap-8">
         <span class="cta-line cta-line-left"></span>
         <button id="cta-trigger" class="cta-arrow-btn" aria-label="Get in touch">
           <span class="cta-arrow-icon">
@@ -41,7 +41,7 @@
     <!-- SUCCESS STATE -->
     <div id="cta-success" class="cta-success-state">
       <span class="cta-success-label font-mono text-sm uppercase tracking-wide" style="color: var(--accent);">Perfect</span>
-      <h2 class="cta-success-heading mb-8 mt-3 text-[clamp(2.5rem,6vw,4.5rem)] font-bold leading-[1.1]" style="color: var(--text-primary);">
+      <h2 class="cta-success-heading mb-10 mt-3 font-heading text-[clamp(2.5rem,6vw,4.5rem)] font-semibold leading-[1.1] tracking-[-0.02em]" style="color: var(--text-primary);">
         Let's talk
       </h2>
 
@@ -68,20 +68,20 @@
 </section>
 
 <style is:global>
-  /* ── Wrapper: relative for absolute success overlay ── */
+  /* -- Wrapper: relative for absolute success overlay -- */
   .cta-wrapper {
     position: relative;
     min-height: 360px;
   }
 
-  /* ── Default state ── */
+  /* -- Default state -- */
   .cta-default-state {
     position: relative;
     z-index: 1;
-    transition: opacity 400ms ease, transform 400ms ease;
+    transition: opacity 600ms var(--ease-luxury), transform 600ms var(--ease-luxury);
   }
 
-  /* ── Success state: absolute overlay, always in DOM ── */
+  /* -- Success state: absolute overlay, always in DOM -- */
   .cta-success-state {
     position: absolute;
     inset: 0;
@@ -92,7 +92,7 @@
     opacity: 0;
     transform: translateY(20px);
     pointer-events: none;
-    transition: opacity 500ms ease, transform 500ms ease;
+    transition: opacity 700ms var(--ease-luxury), transform 700ms var(--ease-luxury);
   }
 
   .cta-success-state.is-visible {
@@ -101,14 +101,14 @@
     pointer-events: auto;
   }
 
-  /* ── Staggered success children ── */
+  /* -- Staggered success children -- */
   .cta-success-label,
   .cta-success-heading,
   .cta-whatsapp-btn,
   .cta-success-subtext {
     opacity: 0;
     transform: translateY(12px);
-    transition: opacity 400ms ease, transform 400ms ease;
+    transition: opacity 500ms var(--ease-luxury), transform 500ms var(--ease-luxury);
   }
 
   .cta-success-state.is-visible .cta-success-label {
@@ -120,22 +120,22 @@
   .cta-success-state.is-visible .cta-success-heading {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 200ms;
+    transition-delay: 250ms;
   }
 
   .cta-success-state.is-visible .cta-whatsapp-btn {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 150ms;
+    transition-delay: 200ms;
   }
 
   .cta-success-state.is-visible .cta-success-subtext {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 450ms;
+    transition-delay: 500ms;
   }
 
-  /* ── Ping animation (availability dot) ── */
+  /* -- Ping animation (availability dot) -- */
   .cta-ping-wrapper {
     position: relative;
     display: inline-block;
@@ -169,21 +169,21 @@
     }
   }
 
-  /* ── Headline ── */
+  /* -- Headline -- */
   .cta-headline {
-    transition: transform 300ms ease;
+    transition: transform 500ms var(--ease-luxury);
     cursor: default;
   }
 
-  /* ── Decorative lines: 3 states ── */
+  /* -- Decorative lines: 3 states -- */
   .cta-line {
     display: block;
     height: 1px;
-    width: 60px;
+    width: 80px;
     background: var(--glass-border);
     opacity: 0.5;
     transform: scaleX(1);
-    transition: transform 300ms ease, opacity 300ms ease;
+    transition: transform 500ms var(--ease-luxury), opacity 500ms var(--ease-luxury);
   }
 
   .cta-line-left {
@@ -194,13 +194,13 @@
     transform-origin: left center;
   }
 
-  /* State 2: Hover → scaleX(1.5) opacity 1 */
+  /* State 2: Hover -> scaleX(1.5) opacity 1 */
   .cta-trigger-row.is-hovered .cta-line {
     transform: scaleX(1.5);
     opacity: 1;
   }
 
-  /* State 3: Clicked → scaleX(0) + translateX(±20px) opacity 0 */
+  /* State 3: Clicked -> scaleX(0) + translateX(+/-20px) opacity 0 */
   .cta-trigger-row.is-clicked .cta-line-left {
     transform: scaleX(0) translateX(-20px);
     opacity: 0;
@@ -211,7 +211,7 @@
     opacity: 0;
   }
 
-  /* ── Arrow button ── */
+  /* -- Arrow button -- */
   .cta-arrow-btn {
     position: relative;
     width: 64px;
@@ -224,15 +224,15 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 300ms ease, color 300ms ease, border-color 300ms ease;
+    transition: background 500ms var(--ease-luxury), color 500ms var(--ease-luxury), border-color 500ms var(--ease-luxury);
     flex-shrink: 0;
     overflow: hidden;
   }
 
   .cta-trigger-row.is-hovered .cta-arrow-btn {
-    background: var(--text-primary);
+    background: var(--accent);
     color: var(--bg-base);
-    border-color: var(--text-primary);
+    border-color: var(--accent);
   }
 
   /* Arrow icon — flies off on click */
@@ -240,7 +240,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 400ms ease, opacity 400ms ease;
+    transition: transform 500ms var(--ease-luxury), opacity 500ms var(--ease-luxury);
   }
 
   .cta-trigger-row.is-clicked .cta-arrow-icon {
@@ -253,7 +253,7 @@
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    border: 1px solid var(--text-primary);
+    border: 1px solid var(--accent);
     opacity: 0;
     transform: scale(1);
     pointer-events: none;
@@ -274,7 +274,7 @@
     }
   }
 
-  /* ── WhatsApp button ── */
+  /* -- WhatsApp button -- */
   .cta-whatsapp-btn {
     display: inline-flex;
     align-items: center;
@@ -284,22 +284,23 @@
     border-radius: 12px;
     color: var(--text-primary);
     background: transparent;
+    font-family: var(--font-heading);
     font-size: 1rem;
     font-weight: 500;
     text-decoration: none;
-    transition: background 300ms ease, color 300ms ease, border-color 300ms ease;
+    transition: background 500ms var(--ease-luxury), color 500ms var(--ease-luxury), border-color 500ms var(--ease-luxury);
   }
 
   .cta-wa-icon,
   .cta-wa-text,
   .cta-wa-arrow {
-    transition: color 300ms ease;
+    transition: color 500ms var(--ease-luxury);
     color: var(--text-primary);
   }
 
   .cta-whatsapp-btn:hover {
-    background: var(--text-primary);
-    border-color: var(--text-primary);
+    background: var(--accent);
+    border-color: var(--accent);
   }
 
   .cta-whatsapp-btn:hover .cta-wa-icon,
@@ -308,7 +309,7 @@
     color: var(--bg-base);
   }
 
-  /* ── Reduced motion ── */
+  /* -- Reduced motion -- */
   @media (prefers-reduced-motion: reduce) {
     .cta-ping-ring {
       animation: none;
@@ -386,11 +387,11 @@
       defaultState.style.transform = "translateY(-20px)";
       defaultState.style.pointerEvents = "none";
 
-      // showSuccess fires 500ms after isClicked
+      // showSuccess fires 600ms after isClicked
       setTimeout(() => {
         showSuccess = true;
         successState.classList.add("is-visible");
-      }, 500);
+      }, 600);
     });
   }
 </script>

@@ -13,28 +13,26 @@ for (const item of work) {
 }
 ---
 
-<section id="projects" class="px-6 py-32">
+<section id="projects" class="px-6 py-40">
   <div class="mx-auto max-w-6xl">
-    <h2 data-reveal class="gsap-reveal mb-12 text-center text-[2rem] font-semibold text-text-primary">Featured Work</h2>
+    <h2 data-reveal class="gsap-reveal mb-20 text-center font-heading text-[2.25rem] font-medium tracking-[-0.02em] text-text-primary">Featured Work</h2>
 
     <!-- Desktop layout -->
     <div class="hidden items-start gap-12 md:flex">
 
       <!-- LEFT: Photo Grid (60%) -->
-      <div class="grid w-[60%] shrink-0 grid-cols-3 gap-2">
+      <div class="grid w-[60%] shrink-0 grid-cols-3 gap-3">
         <!-- Column 1 — no offset -->
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-3">
           {col1.map((item) => (
             <div
               data-work-id={item.id}
-              class="work-photo-container cursor-pointer overflow-hidden"
-              style="width: 155px; height: 165px; border-radius: 12px;"
+              class="work-photo-container cursor-pointer overflow-hidden rounded-xl"
+              style="aspect-ratio: 0.94; width: 100%;"
             >
               <img
                 src={item.image}
                 alt={item.title}
-                width="155"
-                height="165"
                 loading="lazy"
                 class="work-photo h-full w-full object-cover"
               />
@@ -42,18 +40,16 @@ for (const item of work) {
           ))}
         </div>
         <!-- Column 2 — 64px offset -->
-        <div class="mt-16 flex flex-col gap-2">
+        <div class="mt-16 flex flex-col gap-3">
           {col2.map((item) => (
             <div
               data-work-id={item.id}
-              class="work-photo-container cursor-pointer overflow-hidden"
-              style="width: 172px; height: 182px; border-radius: 12px;"
+              class="work-photo-container cursor-pointer overflow-hidden rounded-xl"
+              style="aspect-ratio: 0.95; width: 100%;"
             >
               <img
                 src={item.image}
                 alt={item.title}
-                width="172"
-                height="182"
                 loading="lazy"
                 class="work-photo h-full w-full object-cover"
               />
@@ -61,18 +57,16 @@ for (const item of work) {
           ))}
         </div>
         <!-- Column 3 — 28px offset -->
-        <div class="mt-7 flex flex-col gap-2">
+        <div class="mt-7 flex flex-col gap-3">
           {col3.map((item) => (
             <div
               data-work-id={item.id}
-              class="work-photo-container cursor-pointer overflow-hidden"
-              style="width: 162px; height: 172px; border-radius: 12px;"
+              class="work-photo-container cursor-pointer overflow-hidden rounded-xl"
+              style="aspect-ratio: 0.94; width: 100%;"
             >
               <img
                 src={item.image}
                 alt={item.title}
-                width="162"
-                height="172"
                 loading="lazy"
                 class="work-photo h-full w-full object-cover"
               />
@@ -82,15 +76,15 @@ for (const item of work) {
       </div>
 
       <!-- RIGHT: Name List (40%) -->
-      <div class="flex w-[40%] flex-col gap-5 pt-2">
+      <div class="flex w-[40%] flex-col gap-7 pt-2">
         {work.map((item) => (
           <div data-work-id={item.id} class="work-list-item cursor-pointer">
             <div class="flex items-center gap-[10px]">
               <span class="work-dot"></span>
-              <span class="work-title text-[18px] font-semibold tracking-tight text-text-primary">{item.title}</span>
+              <span class="work-title font-heading text-[18px] font-medium tracking-[-0.02em] text-text-primary">{item.title}</span>
             </div>
             <div class="pl-[27px]">
-              <span class="text-[10px] font-medium uppercase tracking-[0.2em] text-text-muted">{item.role}</span>
+              <span class="font-heading text-[11px] font-medium uppercase tracking-[0.15em] text-text-muted">{item.role}</span>
             </div>
           </div>
         ))}
@@ -99,12 +93,12 @@ for (const item of work) {
 
     <!-- Mobile layout -->
     <!-- Photo row: horizontal scroll -->
-    <div id="work-mobile-scroll" class="mb-6 flex gap-2 overflow-x-auto md:hidden" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+    <div id="work-mobile-scroll" class="mb-6 flex gap-3 overflow-x-auto pl-6 pr-6 md:hidden" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
       {work.map((item) => (
         <div
           data-work-id={item.id}
-          class="work-photo-container flex-none cursor-pointer overflow-hidden"
-          style="width: 140px; height: 150px; border-radius: 12px; scroll-snap-align: start;"
+          class="work-photo-container flex-none cursor-pointer overflow-hidden rounded-xl"
+          style="width: 140px; aspect-ratio: 0.93; scroll-snap-align: start;"
         >
           <img
             src={item.image}
@@ -124,10 +118,10 @@ for (const item of work) {
         <div data-work-id={item.id} class="work-list-item cursor-pointer">
           <div class="flex items-center gap-2">
             <span class="work-dot"></span>
-            <span class="work-title text-sm font-semibold tracking-tight text-text-primary">{item.title}</span>
+            <span class="work-title font-heading text-sm font-medium tracking-tight text-text-primary">{item.title}</span>
           </div>
           <div class="pl-[24px]">
-            <span class="text-[9px] font-medium uppercase tracking-[0.2em] text-text-muted">{item.role}</span>
+            <span class="font-heading text-[9px] font-medium uppercase tracking-[0.15em] text-text-muted">{item.role}</span>
           </div>
         </div>
       ))}
@@ -162,16 +156,16 @@ for (const item of work) {
 
 <style is:global>
   .work-photo-container {
-    background: rgba(30, 30, 38, 0.6);
-    border: 0.5px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    -webkit-backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.08);
+    background: rgba(16, 16, 22, 0.5);
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.05);
   }
 
   .work-photo {
-    filter: grayscale(1) brightness(0.77);
-    transition: filter 500ms ease, opacity 400ms ease;
+    filter: grayscale(1) brightness(0.72);
+    transition: filter 600ms var(--ease-luxury), opacity 500ms var(--ease-luxury);
   }
 
   .work-photo.work-active {
@@ -186,18 +180,18 @@ for (const item of work) {
     width: 16px;
     height: 12px;
     border-radius: 5px;
-    background: rgba(255, 255, 255, 0.25);
-    transition: all 300ms ease;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 400ms var(--ease-luxury);
     flex-shrink: 0;
   }
 
   .work-dot.work-active {
-    background: var(--text-primary);
+    background: var(--accent);
     width: 20px;
   }
 
   .work-list-item {
-    transition: opacity 300ms ease;
+    transition: opacity 400ms var(--ease-luxury);
   }
 
   .work-list-item.work-dimmed {
@@ -206,7 +200,7 @@ for (const item of work) {
 
   .work-title {
     opacity: 0.8;
-    transition: opacity 300ms ease;
+    transition: opacity 400ms var(--ease-luxury);
   }
 
   .work-title.work-active {
@@ -240,7 +234,7 @@ for (const item of work) {
   .work-lightbox-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(10, 10, 15, 0.92);
+    background: rgba(8, 8, 13, 0.92);
   }
 
   .work-lightbox-content {
@@ -259,11 +253,11 @@ for (const item of work) {
     max-height: 65vh;
     border-radius: 12px;
     overflow: hidden;
-    background: rgba(30, 30, 38, 0.7);
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    -webkit-backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.09);
+    background: rgba(16, 16, 22, 0.65);
+    border: 0.5px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.07);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -287,17 +281,19 @@ for (const item of work) {
   }
 
   .work-lightbox-title {
+    font-family: var(--font-heading);
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.02em;
   }
 
   .work-lightbox-role {
-    font-size: 10px;
+    font-family: var(--font-heading);
+    font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.15em;
     color: var(--text-secondary);
   }
 
@@ -307,19 +303,20 @@ for (const item of work) {
     gap: 6px;
     margin-top: 8px;
     padding: 8px 20px;
+    font-family: var(--font-heading);
     font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);
-    background: rgba(239, 68, 68, 0.12);
-    border: 1px solid rgba(239, 68, 68, 0.2);
+    background: rgba(201, 169, 110, 0.10);
+    border: 1px solid rgba(201, 169, 110, 0.18);
     border-radius: 8px;
     text-decoration: none;
-    transition: background 300ms ease, border-color 300ms ease;
+    transition: background 500ms var(--ease-luxury), border-color 500ms var(--ease-luxury);
   }
 
   .work-lightbox-link:hover {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.35);
+    background: rgba(201, 169, 110, 0.18);
+    border-color: rgba(201, 169, 110, 0.3);
   }
 
   .work-lightbox-link[href="#"] {
@@ -335,25 +332,25 @@ for (const item of work) {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(30, 30, 38, 0.65);
-    border: 0.5px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    -webkit-backdrop-filter: blur(50px) saturate(190%) brightness(1.05);
-    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.09);
+    background: rgba(16, 16, 22, 0.55);
+    border: 0.5px solid rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(1.03);
+    box-shadow: inset 0 0.5px 0 0 rgba(255, 255, 255, 0.06);
     border-radius: 8px;
     color: var(--text-primary);
     cursor: pointer;
-    transition: background 200ms ease;
+    transition: background 400ms var(--ease-luxury);
   }
 
   .work-lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
   }
 
   /* Blur the section content when lightbox is open */
   #projects.work-blurred > .mx-auto {
     filter: blur(12px);
-    transition: filter 400ms ease;
+    transition: filter 500ms var(--ease-luxury);
   }
 </style>
 
@@ -388,7 +385,7 @@ for (const item of work) {
 
         // GSAP pop animation on the photo container
         if (el.classList.contains("work-photo-container")) {
-          gsap.fromTo(el, { scale: 0.95 }, { scale: 1, duration: 0.5, ease: "back.out(1.5)" });
+          gsap.fromTo(el, { scale: 0.98 }, { scale: 1, duration: 0.6, ease: "back.out(1.5)" });
 
           // Auto-scroll mobile row to keep active photo visible
           if (mobileScroll && mobileScroll.contains(el)) {
@@ -399,7 +396,7 @@ for (const item of work) {
 
         // GSAP slide on list item dot
         if (dot) {
-          gsap.fromTo(dot, { x: -4 }, { x: 0, duration: 0.3, ease: "power2.out" });
+          gsap.fromTo(dot, { x: -4 }, { x: 0, duration: 0.4, ease: "power3.out" });
         }
       } else {
         el.classList.remove("work-active");
@@ -496,11 +493,11 @@ for (const item of work) {
 
     // Animate in
     const tl = gsap.timeline();
-    tl.fromTo(lightboxBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" });
+    tl.fromTo(lightboxBackdrop, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power3.out" });
     tl.fromTo(
       lightboxContent,
-      { opacity: 0, scale: 0.9, y: 30 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(1.4)" },
+      { opacity: 0, scale: 0.92, y: 30 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.4)" },
       "-=0.15"
     );
 
@@ -522,8 +519,8 @@ for (const item of work) {
       },
     });
 
-    tl.to(lightboxContent, { opacity: 0, scale: 0.92, y: 20, duration: 0.3, ease: "power2.in" });
-    tl.to(lightboxBackdrop, { opacity: 0, duration: 0.25, ease: "power2.in" }, "-=0.15");
+    tl.to(lightboxContent, { opacity: 0, scale: 0.94, y: 20, duration: 0.35, ease: "power3.in" });
+    tl.to(lightboxBackdrop, { opacity: 0, duration: 0.3, ease: "power3.in" }, "-=0.15");
   }
 
   // Click handlers on all work elements
