@@ -46,7 +46,7 @@ function initAnimations() {
     );
 
   // Generic section reveals — About, Projects, Contact
-  ["#about", "#projects", "#cta"].forEach((sectionId) => {
+  ["#about", "#profile", "#projects", "#cta"].forEach((sectionId) => {
     const section = document.querySelector(sectionId);
     if (!section) return;
     const reveals = section.querySelectorAll("[data-reveal]");
