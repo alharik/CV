@@ -34,7 +34,7 @@ const TECH_MARKERS: Marker[] = [
 
   // Music & Audio (equatorial band)
   { lat: -3, lng: -100, label: "FL Studio" },
-  { lat: -14, lng: -35, label: "SM7B" },
+  { lat: -14, lng: -35, label: "SM7dB" },
   { lat: -8, lng: 35, label: "Audient iD4" },
   { lat: -18, lng: 105, label: "Original Soundtracks" },
   { lat: 2, lng: 165, label: "DistroKid" },

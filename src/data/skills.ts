@@ -14,7 +14,7 @@ export const skills: SkillGroup[] = [
   },
   {
     category: "Music & Audio",
-    items: ["FL Studio", "SM7B", "Audient iD4", "Original Soundtracks", "DistroKid"],
+    items: ["FL Studio", "SM7dB", "Audient iD4", "Original Soundtracks", "DistroKid"],
   },
   {
     category: "Development & Tools",
