@@ -1,11 +1,14 @@
 // ============================================
-// mp3towav.online — App Logic
-// Client-side MP3→WAV via Sonic Converter (Rust/WASM)
+// mp3towav.online — App Logic v1.1
+// Client-side audio conversion via Sonic Converter (Rust/WASM)
+// Supports: MP3, WAV, FLAC, OGG, AAC → WAV
 // Zero dependencies. Nothing leaves your device.
-// Powered by symphonia (pure Rust MP3 decoder)
+// Powered by symphonia + rubato (pure Rust)
 // ============================================
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+const SUPPORTED_EXTENSIONS = ['.mp3', '.wav', '.flac', '.ogg', '.aac', '.m4a'];
+const SUPPORTED_MIMES = ['audio/mpeg', 'audio/wav', 'audio/flac', 'audio/ogg', 'audio/aac', 'audio/mp4', 'audio/x-m4a'];
 
 // --- State ---
 let lastBlobUrl = null;
@@ -13,7 +16,8 @@ let lastFileName = null;
 let isProcessing = false;
 let wasmReady = false;
 let wasmModule = null;
-let selectedBitDepth = 16;
+let selectedBitDepth = 24;
+let selectedSampleRate = 0; // 0 = keep original
 let batchResults = []; // { file, blobUrl, outputName, size, error }
 let batchAudio = null; // currently playing audio in batch mode
 let previewAudio = null;
@@ -42,11 +46,29 @@ const batchQueue = document.getElementById('batchQueue');
 const batchActions = document.getElementById('batchActions');
 const downloadAllBtn = document.getElementById('downloadAllBtn');
 const batchResetBtn = document.getElementById('batchResetBtn');
-const previewBtn = document.getElementById('previewBtn');
+const audioPlayer = document.getElementById('audioPlayer');
+const apPlayBtn = document.getElementById('apPlayBtn');
+const apTrack = document.getElementById('apTrack');
+const apFilled = document.getElementById('apFilled');
+const apThumb = document.getElementById('apThumb');
+const apTime = document.getElementById('apTime');
 const conversionCounter = document.getElementById('conversionCounter');
 const historySection = document.getElementById('historySection');
 const historyToggle = document.getElementById('historyToggle');
 const historyList = document.getElementById('historyList');
+const sampleRateSelector = document.getElementById('sampleRateSelector');
+const themeToggle = document.getElementById('themeToggle');
+
+// --- File Support Check ---
+function isSupportedAudio(file) {
+    const name = file.name.toLowerCase();
+    return SUPPORTED_EXTENSIONS.some(ext => name.endsWith(ext)) || SUPPORTED_MIMES.includes(file.type);
+}
+
+function getOutputName(fileName) {
+    // Replace any audio extension with .wav
+    return fileName.replace(/\.(mp3|flac|ogg|aac|m4a|wav)$/i, '.wav');
+}
 
 // --- Initialize WASM after page load (doesn't block tab spinner) ---
 let wasmInitResolve;
@@ -66,7 +88,7 @@ window.addEventListener('load', () => {
         } catch (err) {
             console.warn('WASM init failed, will use Web Audio API fallback:', err.message);
         }
-        if (dropLimit) dropLimit.textContent = 'MP3 files up to 100 MB';
+        if (dropLimit) dropLimit.textContent = 'Audio files up to 100 MB';
         wasmInitResolve();
     })();
 });
@@ -90,27 +112,83 @@ dropZone.addEventListener('dragleave', (e) => {
     dropZone.classList.remove('dragover');
 });
 
-dropZone.addEventListener('drop', (e) => {
+dropZone.addEventListener('drop', async (e) => {
     e.preventDefault();
     dropZone.classList.remove('dragover');
     if (isProcessing) return;
-    const allFiles = Array.from(e.dataTransfer.files);
-    const files = allFiles.filter(f =>
-        f.name.toLowerCase().endsWith('.mp3') || f.type === 'audio/mpeg'
-    );
-    if (files.length === 0) {
-        const rejected = allFiles[0];
-        const ext = rejected ? rejected.name.split('.').pop().toLowerCase() : 'unknown';
-        showError('Only MP3 files are supported. You dropped a .' + ext + ' file.');
-        trackEvent('FileRejected', { extension: ext });
-        return;
+
+    // Check for folder drops (webkitGetAsEntry API)
+    const items = e.dataTransfer.items;
+    let files = [];
+
+    if (items && items.length > 0 && items[0].webkitGetAsEntry) {
+        const entries = [];
+        for (let i = 0; i < items.length; i++) {
+            const entry = items[i].webkitGetAsEntry();
+            if (entry) entries.push(entry);
+        }
+
+        const hasDirectory = entries.some(e => e.isDirectory);
+        if (hasDirectory) {
+            // Read directory recursively
+            const allFiles = await readEntriesRecursive(entries);
+            files = allFiles.filter(f => isSupportedAudio(f));
+            if (files.length === 0) {
+                showError('No supported audio files found in the folder. Supported: MP3, WAV, FLAC, OGG, AAC.');
+                return;
+            }
+        }
     }
+
+    // Fallback to regular file list if no folder was detected
+    if (files.length === 0) {
+        const allFiles = Array.from(e.dataTransfer.files);
+        files = allFiles.filter(f => isSupportedAudio(f));
+        if (files.length === 0) {
+            const rejected = allFiles[0];
+            const ext = rejected ? rejected.name.split('.').pop().toLowerCase() : 'unknown';
+            showError('Unsupported format (.' + ext + '). Supported: MP3, WAV, FLAC, OGG, AAC.');
+            trackEvent('FileRejected', { extension: ext });
+            return;
+        }
+    }
+
     if (files.length === 1) {
         handleFile(files[0]);
     } else {
         handleBatch(files);
     }
 });
+
+// --- Folder Reading (recursive) ---
+async function readEntriesRecursive(entries) {
+    const files = [];
+    for (const entry of entries) {
+        if (entry.isFile) {
+            const file = await new Promise(resolve => entry.file(resolve));
+            files.push(file);
+        } else if (entry.isDirectory) {
+            const reader = entry.createReader();
+            const childEntries = await new Promise(resolve => {
+                const results = [];
+                const readBatch = () => {
+                    reader.readEntries(batch => {
+                        if (batch.length === 0) {
+                            resolve(results);
+                        } else {
+                            results.push(...batch);
+                            readBatch();
+                        }
+                    });
+                };
+                readBatch();
+            });
+            const childFiles = await readEntriesRecursive(childEntries);
+            files.push(...childFiles);
+        }
+    }
+    return files;
+}
 
 // --- Click / Browse ---
 dropZone.addEventListener('click', (e) => {
@@ -126,12 +204,10 @@ browseBtn.addEventListener('click', (e) => {
 
 fileInput.addEventListener('change', () => {
     const allFiles = Array.from(fileInput.files);
-    const files = allFiles.filter(f =>
-        f.name.toLowerCase().endsWith('.mp3') || f.type === 'audio/mpeg'
-    );
+    const files = allFiles.filter(f => isSupportedAudio(f));
     if (files.length === 0 && allFiles.length > 0) {
         const ext = allFiles[0].name.split('.').pop().toLowerCase();
-        showError('Only MP3 files are supported. You selected a .' + ext + ' file.');
+        showError('Unsupported format (.' + ext + '). Supported: MP3, WAV, FLAC, OGG, AAC.');
         trackEvent('FileRejected', { extension: ext });
         fileInput.value = '';
         return;
@@ -178,6 +254,70 @@ bitDepthSelector.addEventListener('click', (e) => {
     btn.classList.add('active');
     selectedBitDepth = parseInt(btn.dataset.depth, 10);
 });
+
+// --- Tool Cards ---
+const toolCards = document.getElementById('toolCards');
+if (toolCards) {
+    toolCards.addEventListener('click', (e) => {
+        const card = e.target.closest('.tool-card');
+        if (!card) return;
+        toolCards.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        // Update file input accept attribute
+        const accept = card.dataset.accept;
+        if (accept) fileInput.setAttribute('accept', accept);
+        // Update drop zone text
+        const label = card.dataset.label || 'audio files';
+        const dropText = document.querySelector('.drop-text');
+        if (dropText) dropText.textContent = 'Drop your ' + label.split(' to ')[0] + ' files here';
+    });
+}
+
+// --- Sample Rate Selector ---
+if (sampleRateSelector) {
+    sampleRateSelector.addEventListener('click', (e) => {
+        const btn = e.target.closest('.sample-rate-btn');
+        if (!btn) return;
+        sampleRateSelector.querySelectorAll('.sample-rate-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSampleRate = parseInt(btn.dataset.rate, 10);
+    });
+}
+
+// --- Theme Toggle ---
+(function initTheme() {
+    const saved = localStorage.getItem('mp3towav_theme');
+    if (saved) {
+        document.documentElement.dataset.theme = saved;
+    } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        document.documentElement.dataset.theme = 'light';
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.dataset.theme || 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = next;
+            localStorage.setItem('mp3towav_theme', next);
+            updateThemeIcon(next);
+        });
+        updateThemeIcon(document.documentElement.dataset.theme || 'dark');
+    }
+})();
+
+function updateThemeIcon(theme) {
+    if (!themeToggle) return;
+    const sunIcon = themeToggle.querySelector('.theme-icon-sun');
+    const moonIcon = themeToggle.querySelector('.theme-icon-moon');
+    if (sunIcon && moonIcon) {
+        if (theme === 'light') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        } else {
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        }
+    }
+}
 
 // --- Batch Buttons ---
 downloadAllBtn.addEventListener('click', async (e) => {
@@ -231,67 +371,127 @@ batchResetBtn.addEventListener('click', (e) => {
     reset();
 });
 
-// --- Audio Preview ---
-previewBtn.addEventListener('click', (e) => {
+// --- Audio Player ---
+function fmtTime(s) {
+    if (!isFinite(s)) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + String(sec).padStart(2, '0');
+}
+
+function apSetPosition(pct) {
+    const p = Math.max(0, Math.min(100, pct));
+    apFilled.style.width = p + '%';
+    apThumb.style.left = p + '%';
+}
+
+function apUpdateTime() {
+    if (!previewAudio) return;
+    const cur = previewAudio.currentTime;
+    const dur = previewAudio.duration || 0;
+    apTime.textContent = fmtTime(cur) + ' / ' + fmtTime(dur);
+    if (dur > 0 && !apSeeking) apSetPosition((cur / dur) * 100);
+}
+
+function apShowPlay() {
+    apPlayBtn.querySelector('.ap-icon-play').classList.remove('hidden');
+    apPlayBtn.querySelector('.ap-icon-pause').classList.add('hidden');
+    audioPlayer.classList.remove('playing');
+    apPlayBtn.setAttribute('aria-label', 'Play');
+}
+
+function apShowPause() {
+    apPlayBtn.querySelector('.ap-icon-play').classList.add('hidden');
+    apPlayBtn.querySelector('.ap-icon-pause').classList.remove('hidden');
+    audioPlayer.classList.add('playing');
+    apPlayBtn.setAttribute('aria-label', 'Pause');
+}
+
+let apSeeking = false;
+let apRaf = null;
+
+function apTick() {
+    apUpdateTime();
+    apRaf = requestAnimationFrame(apTick);
+}
+
+function apStopTick() {
+    if (apRaf) { cancelAnimationFrame(apRaf); apRaf = null; }
+}
+
+// Play / Pause
+apPlayBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (previewAudio && !previewAudio.paused) {
+    if (!previewAudio) {
+        if (!lastBlobUrl) return;
+        previewAudio = new Audio(lastBlobUrl);
+        previewAudio.addEventListener('loadedmetadata', apUpdateTime);
+        previewAudio.addEventListener('ended', () => {
+            apShowPlay();
+            apStopTick();
+            apSetPosition(0);
+            apUpdateTime();
+        });
+    }
+    if (previewAudio.paused) {
+        previewAudio.play().catch(() => { apShowPlay(); apStopTick(); });
+        apShowPause();
+        apTick();
+    } else {
         previewAudio.pause();
-        previewAudio.currentTime = 0;
-        previewBtn.innerHTML = '&#9654; Preview';
-        previewBtn.classList.remove('playing');
-        previewAudio = null;
-        return;
-    }
-    if (!lastBlobUrl) return;
-    previewAudio = new Audio(lastBlobUrl);
-    previewAudio.play().catch(() => {
-        previewBtn.innerHTML = '&#9654; Preview';
-        previewBtn.classList.remove('playing');
-        previewAudio = null;
-    });
-    previewBtn.innerHTML = '&#9646;&#9646; Stop';
-    previewBtn.classList.add('playing');
-    previewAudio.addEventListener('ended', () => {
-        previewBtn.innerHTML = '&#9654; Preview';
-        previewBtn.classList.remove('playing');
-        previewAudio = null;
-    });
-});
-
-// --- Full-viewport drag overlay ---
-const dragOverlay = document.getElementById('dragOverlay');
-let dragCounter = 0;
-
-document.addEventListener('dragenter', (e) => {
-    e.preventDefault();
-    dragCounter++;
-    if (dragCounter === 1 && !isProcessing) {
-        dragOverlay.classList.remove('hidden');
+        apShowPlay();
+        apStopTick();
     }
 });
 
-document.addEventListener('dragleave', (e) => {
-    e.preventDefault();
-    dragCounter--;
-    if (dragCounter <= 0) {
-        dragCounter = 0;
-        dragOverlay.classList.add('hidden');
+// Seek via click / drag on track
+function apSeekFromEvent(e) {
+    const rect = apTrack.getBoundingClientRect();
+    const pct = ((e.clientX - rect.left) / rect.width) * 100;
+    apSetPosition(pct);
+    if (previewAudio && previewAudio.duration) {
+        previewAudio.currentTime = (pct / 100) * previewAudio.duration;
     }
+    apUpdateTime();
+}
+
+apTrack.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+    apSeeking = true;
+    audioPlayer.classList.add('seeking');
+    apSeekFromEvent(e);
+
+    function onMove(ev) { apSeekFromEvent(ev); }
+    function onUp() {
+        apSeeking = false;
+        audioPlayer.classList.remove('seeking');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
 });
 
-document.addEventListener('dragover', (e) => e.preventDefault());
-
-document.addEventListener('drop', (e) => {
-    e.preventDefault();
-    dragCounter = 0;
-    dragOverlay.classList.add('hidden');
+// Touch support
+apTrack.addEventListener('touchstart', (e) => {
+    e.stopPropagation();
+    apSeeking = true;
+    audioPlayer.classList.add('seeking');
+    apSeekFromEvent(e.touches[0]);
+}, { passive: true });
+apTrack.addEventListener('touchmove', (e) => {
+    if (apSeeking) apSeekFromEvent(e.touches[0]);
+}, { passive: true });
+apTrack.addEventListener('touchend', () => {
+    apSeeking = false;
+    audioPlayer.classList.remove('seeking');
 });
 
 // --- File Validation ---
 function handleFile(file) {
-    const isMP3 = file.name.toLowerCase().endsWith('.mp3') || file.type === 'audio/mpeg';
-    if (!isMP3) {
-        showError("That doesn't look like an MP3 file. Please select a valid .mp3 file.");
+    if (!isSupportedAudio(file)) {
+        const ext = file.name.split('.').pop().toLowerCase();
+        showError('Unsupported format (.' + ext + '). Supported: MP3, WAV, FLAC, OGG, AAC.');
         return;
     }
     if (file.size > MAX_FILE_SIZE) {
@@ -368,10 +568,10 @@ async function convertFile(file) {
 
         // Read file as ArrayBuffer
         const arrayBuffer = await file.arrayBuffer();
-        const mp3Bytes = new Uint8Array(arrayBuffer);
+        const audioBytes = new Uint8Array(arrayBuffer);
 
         progressFill.style.width = '30%';
-        progressText.textContent = 'Decoding MP3...';
+        progressText.textContent = 'Decoding audio...';
 
         let wavBuffer;
 
@@ -379,17 +579,17 @@ async function convertFile(file) {
         await wasmInit;
 
         if (wasmReady) {
-            // Primary path: Sonic Converter (Rust/WASM)
+            // Primary path: Sonic Converter (Rust/WASM) — multi-format
             progressText.textContent = 'Converting (Sonic Engine)...';
             progressFill.style.width = '50%';
 
-            const wavBytes = wasmModule.convertMp3ToWavWithDepth(mp3Bytes, selectedBitDepth);
+            const wavBytes = wasmModule.convertAudioToWav(audioBytes, selectedBitDepth, selectedSampleRate);
             wavBuffer = wavBytes.buffer;
 
             progressFill.style.width = '90%';
             progressText.textContent = 'Finalizing...';
         } else {
-            // Fallback: Web Audio API
+            // Fallback: Web Audio API (MP3 only, 16-bit)
             actualBitDepth = 16;
             if (selectedBitDepth !== 16) {
                 console.warn('Web Audio fallback only supports 16-bit. Using 16-bit output.');
@@ -408,7 +608,7 @@ async function convertFile(file) {
             progressText.textContent = 'Finalizing...';
         }
 
-        const outputName = file.name.replace(/\.mp3$/i, '.wav');
+        const outputName = getOutputName(file.name);
         const blob = new Blob([wavBuffer], { type: 'audio/wav' });
 
         // Store for re-download
@@ -446,7 +646,7 @@ async function convertFile(file) {
 
     } catch (err) {
         console.error('Conversion failed:', err);
-        showError('Conversion failed. The file may be corrupted or not a valid MP3. Please try again.');
+        showError('Conversion failed. The file may be corrupted or unsupported. Please try again.');
     } finally {
         isProcessing = false;
     }
@@ -496,12 +696,12 @@ async function handleBatch(files) {
 
         try {
             const arrayBuffer = await files[i].arrayBuffer();
-            const mp3Bytes = new Uint8Array(arrayBuffer);
+            const audioBytes = new Uint8Array(arrayBuffer);
             let wavBuffer;
             let actualBitDepth = selectedBitDepth;
 
             if (wasmReady) {
-                wavBuffer = wasmModule.convertMp3ToWavWithDepth(mp3Bytes, selectedBitDepth).buffer;
+                wavBuffer = wasmModule.convertAudioToWav(audioBytes, selectedBitDepth, selectedSampleRate).buffer;
             } else {
                 actualBitDepth = 16;
                 if (selectedBitDepth !== 16) {
@@ -513,7 +713,7 @@ async function handleBatch(files) {
                 wavBuffer = encodeWAV(audioBuffer);
             }
 
-            const outputName = files[i].name.replace(/\.mp3$/i, '.wav');
+            const outputName = getOutputName(files[i].name);
             const blob = new Blob([wavBuffer], { type: 'audio/wav' });
             const blobUrl = URL.createObjectURL(blob);
 
@@ -636,6 +836,10 @@ function reset() {
         previewAudio.pause();
         previewAudio = null;
     }
+    apStopTick();
+    apShowPlay();
+    apSetPosition(0);
+    apTime.textContent = '0:00 / 0:00';
     lastFileName = null;
     fileInput.value = '';
     progressFill.style.width = '0%';

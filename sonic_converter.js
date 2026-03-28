@@ -1,8 +1,39 @@
+/* @ts-self-types="./sonic_converter.d.ts" */
+
+/**
+ * Convert any supported audio format to WAV.
+ *
+ * Auto-detects input format (MP3, WAV, FLAC, OGG, AAC).
+ * `bit_depth`: 16, 24, or 32.
+ * `target_sample_rate`: desired output rate in Hz, or 0 to keep original.
+ * @param {Uint8Array} audio_data
+ * @param {number} bit_depth
+ * @param {number} target_sample_rate
+ * @returns {Uint8Array}
+ */
+export function convertAudioToWav(audio_data, bit_depth, target_sample_rate) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passArray8ToWasm0(audio_data, wasm.__wbindgen_export2);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.convertAudioToWav(retptr, ptr0, len0, bit_depth, target_sample_rate);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+        var r3 = getDataViewMemory0().getInt32(retptr + 4 * 3, true);
+        if (r3) {
+            throw takeObject(r2);
+        }
+        var v2 = getArrayU8FromWasm0(r0, r1).slice();
+        wasm.__wbindgen_export(r0, r1 * 1, 1);
+        return v2;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
 /**
  * Convert MP3 bytes to WAV bytes (16-bit PCM).
- *
- * This is the main entry point for browser-based conversion.
- * Takes a Uint8Array of MP3 data and returns a Uint8Array of WAV data.
  * @param {Uint8Array} mp3_data
  * @returns {Uint8Array}
  */
@@ -29,8 +60,6 @@ export function convertMp3ToWav(mp3_data) {
 
 /**
  * Convert MP3 bytes to WAV bytes with configurable bit depth.
- *
- * `bit_depth`: 16 (default), 24, or 32 (float).
  * @param {Uint8Array} mp3_data
  * @param {number} bit_depth
  * @returns {Uint8Array}
@@ -57,9 +86,41 @@ export function convertMp3ToWavWithDepth(mp3_data, bit_depth) {
 }
 
 /**
- * Get audio metadata from MP3 bytes without full conversion.
+ * Get audio metadata from any supported format without full conversion.
  *
- * Returns a JSON string with sample_rate, channels, duration_secs.
+ * Returns a JSON string with sampleRate, channels, durationSecs, totalSamples, format.
+ * @param {Uint8Array} audio_data
+ * @returns {string}
+ */
+export function getAudioInfo(audio_data) {
+    let deferred3_0;
+    let deferred3_1;
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passArray8ToWasm0(audio_data, wasm.__wbindgen_export2);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.getAudioInfo(retptr, ptr0, len0);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+        var r3 = getDataViewMemory0().getInt32(retptr + 4 * 3, true);
+        var ptr2 = r0;
+        var len2 = r1;
+        if (r3) {
+            ptr2 = 0; len2 = 0;
+            throw takeObject(r2);
+        }
+        deferred3_0 = ptr2;
+        deferred3_1 = len2;
+        return getStringFromWasm0(ptr2, len2);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_export(deferred3_0, deferred3_1, 1);
+    }
+}
+
+/**
+ * Get audio metadata from MP3 bytes (backwards compatible).
  * @param {Uint8Array} mp3_data
  * @returns {string}
  */
@@ -87,6 +148,27 @@ export function getMp3Info(mp3_data) {
     } finally {
         wasm.__wbindgen_add_to_stack_pointer(16);
         wasm.__wbindgen_export(deferred3_0, deferred3_1, 1);
+    }
+}
+
+/**
+ * Get list of supported input formats.
+ * @returns {string}
+ */
+export function getSupportedFormats() {
+    let deferred1_0;
+    let deferred1_1;
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        wasm.getSupportedFormats(retptr);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        deferred1_0 = r0;
+        deferred1_1 = r1;
+        return getStringFromWasm0(r0, r1);
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+        wasm.__wbindgen_export(deferred1_0, deferred1_1, 1);
     }
 }
 

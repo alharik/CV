@@ -26,13 +26,15 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="manifest" href="/manifest.json">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts (non-blocking) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" crossorigin>
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin></noscript>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.1.1">
 
     <!-- Plausible Analytics -->
     <script defer data-domain="mp3towav.online" src="https://plausible.io/js/script.js"></script>
@@ -155,6 +157,10 @@
                 <a href="/blog/">Blog</a>
                 <a href="/faq/">FAQ</a>
                 <a href="/about/">About</a>
+                <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+                    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    <svg class="theme-icon theme-icon-moon hidden" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                </button>
             </div>
         </nav>
         <div class="container">
@@ -165,7 +171,36 @@
     <main>
         <section class="converter">
             <div class="container">
-                <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Drop MP3 file here or click to browse">
+                <!-- Conversion Tool Cards -->
+                <div class="tool-cards" id="toolCards">
+                    <button type="button" class="tool-card active" data-accept=".mp3,audio/mpeg" data-label="MP3 to WAV">
+                        <span class="tool-from">MP3</span>
+                        <span class="tool-arrow">&rarr;</span>
+                        <span class="tool-to">WAV</span>
+                    </button>
+                    <button type="button" class="tool-card" data-accept=".flac,audio/flac" data-label="FLAC to WAV">
+                        <span class="tool-from">FLAC</span>
+                        <span class="tool-arrow">&rarr;</span>
+                        <span class="tool-to">WAV</span>
+                    </button>
+                    <button type="button" class="tool-card" data-accept=".ogg,audio/ogg" data-label="OGG to WAV">
+                        <span class="tool-from">OGG</span>
+                        <span class="tool-arrow">&rarr;</span>
+                        <span class="tool-to">WAV</span>
+                    </button>
+                    <button type="button" class="tool-card" data-accept=".aac,.m4a,audio/aac,audio/mp4" data-label="AAC to WAV">
+                        <span class="tool-from">AAC</span>
+                        <span class="tool-arrow">&rarr;</span>
+                        <span class="tool-to">WAV</span>
+                    </button>
+                    <button type="button" class="tool-card" data-accept=".mp3,.wav,.flac,.ogg,.aac,.m4a,audio/*" data-label="All formats">
+                        <span class="tool-from">ALL</span>
+                        <span class="tool-arrow">&rarr;</span>
+                        <span class="tool-to">WAV</span>
+                    </button>
+                </div>
+
+                <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Drop audio file here or click to browse">
                     <!-- Idle State -->
                     <div class="drop-zone-idle" id="dzIdle">
                         <div class="waveform" id="waveform">
@@ -177,9 +212,9 @@
                             <span class="bar"></span>
                             <span class="bar"></span>
                         </div>
-                        <p class="drop-text">Drop your MP3 files here</p>
+                        <p class="drop-text">Drop your audio files here</p>
                         <p class="drop-subtext">or <button type="button" id="browseBtn" class="browse-link">browse files</button></p>
-                        <p class="drop-limit"><span class="format-badge">MP3</span> files up to 100 MB</p>
+                        <p class="drop-limit">Audio files up to 100 MB</p>
                     </div>
 
                     <!-- Loading State -->
@@ -204,8 +239,20 @@
                         <div class="done-icon" aria-hidden="true">&#10003;</div>
                         <p class="done-text">Conversion complete</p>
                         <div class="file-comparison" id="fileComparison"></div>
+                        <!-- Audio Player -->
+                        <div class="audio-player" id="audioPlayer">
+                            <button type="button" class="ap-play" id="apPlayBtn" title="Play/Pause" aria-label="Play">
+                                <svg class="ap-icon ap-icon-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+                                <svg class="ap-icon ap-icon-pause hidden" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+                            </button>
+                            <div class="ap-track" id="apTrack">
+                                <div class="ap-filled" id="apFilled"></div>
+                                <div class="ap-thumb" id="apThumb"></div>
+                            </div>
+                            <span class="ap-time" id="apTime">0:00 / 0:00</span>
+                        </div>
+
                         <div class="done-buttons">
-                            <button type="button" class="btn-preview" id="previewBtn" title="Preview audio">&#9654; Preview</button>
                             <button type="button" class="btn-primary" id="downloadBtn">Download WAV</button>
                         </div>
                         <button type="button" class="btn-secondary" id="convertAnotherBtn">Convert another file</button>
@@ -228,13 +275,22 @@
                         </div>
                     </div>
                 </div>
-                <input type="file" id="fileInput" accept=".mp3,audio/mpeg" multiple hidden>
+                <input type="file" id="fileInput" accept=".mp3,.wav,.flac,.ogg,.aac,.m4a,audio/mpeg,audio/wav,audio/flac,audio/ogg,audio/aac,audio/mp4" multiple hidden>
                 <div class="bit-depth-selector" id="bitDepthSelector">
                     <span class="bit-depth-label">Output quality</span>
                     <div class="bit-depth-options">
-                        <button type="button" class="bit-depth-btn active" data-depth="16">16-bit</button>
-                        <button type="button" class="bit-depth-btn" data-depth="24">24-bit</button>
+                        <button type="button" class="bit-depth-btn" data-depth="16">16-bit</button>
+                        <button type="button" class="bit-depth-btn active" data-depth="24">24-bit</button>
                         <button type="button" class="bit-depth-btn" data-depth="32">32-bit</button>
+                    </div>
+                </div>
+                <div class="sample-rate-selector" id="sampleRateSelector">
+                    <span class="selector-label">Sample rate</span>
+                    <div class="sample-rate-options">
+                        <button type="button" class="sample-rate-btn active" data-rate="0">Original</button>
+                        <button type="button" class="sample-rate-btn" data-rate="44100">44.1 kHz</button>
+                        <button type="button" class="sample-rate-btn" data-rate="48000">48 kHz</button>
+                        <button type="button" class="sample-rate-btn" data-rate="96000">96 kHz</button>
                     </div>
                 </div>
                 <p class="conversion-counter hidden" id="conversionCounter" aria-live="polite"></p>
@@ -264,6 +320,51 @@
                 <input type="email" name="email" class="newsletter-input" placeholder="your@email.com" required aria-label="Email address">
                 <button type="submit" class="newsletter-btn">Subscribe</button>
             </form>
+        </div>
+    </section>
+
+    <!-- What's New -->
+    <section class="whats-new-section" id="whatsNew">
+        <div class="container">
+            <h2 class="whats-new-title">What's New <span class="version-badge">v1.1</span></h2>
+            <div class="update-list">
+                <div class="update-item">
+                    <span class="update-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                    </span>
+                    <div>
+                        <h3>Multi-Format Support</h3>
+                        <p>Convert from MP3, WAV, FLAC, OGG, and AAC to high-quality WAV. Auto-detects your file format.</p>
+                    </div>
+                </div>
+                <div class="update-item">
+                    <span class="update-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
+                    <div>
+                        <h3>Sample Rate Control</h3>
+                        <p>Choose your output sample rate: keep original, or convert to 44.1 kHz, 48 kHz, or 96 kHz. Powered by rubato (pure Rust resampler).</p>
+                    </div>
+                </div>
+                <div class="update-item">
+                    <span class="update-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+                    </span>
+                    <div>
+                        <h3>Dark & Light Mode</h3>
+                        <p>Switch between dark and light themes. Your preference is saved automatically.</p>
+                    </div>
+                </div>
+                <div class="update-item">
+                    <span class="update-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    </span>
+                    <div>
+                        <h3>Folder Drop</h3>
+                        <p>Drag and drop an entire folder. mp3towav scans for audio files and batch-converts them all.</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -413,7 +514,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js" defer></script>
-    <script defer src="app.js"></script>
+    <script defer src="app.js?v=1.1.2"></script>
     <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -440,11 +541,9 @@
         });
     })();
     </script>
-    <div class="drag-overlay hidden" id="dragOverlay">
-        <div class="drag-overlay-content">
-            <span class="drag-overlay-icon" aria-hidden="true">&#8615;</span>
-            <p>Drop anywhere to convert</p>
-        </div>
-    </div>
+    <script type="module">
+        import { injectSpeedInsights } from 'https://cdn.vercel-insights.com/v1/speed-insights';
+        injectSpeedInsights();
+    </script>
 </body>
 </html>

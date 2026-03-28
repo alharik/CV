@@ -20,6 +20,20 @@
     --radius: 10px;
 }
 
+[data-theme="light"] {
+    --bg: #ffffff;
+    --surface: #f4f4f5;
+    --surface-2: #e4e4e7;
+    --border: #d4d4d8;
+    --border-hover: #a1a1aa;
+    --text: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #71717a;
+    --primary: #ea580c;
+    --primary-hover: #f97316;
+    --primary-glow: rgba(234, 88, 12, 0.1);
+}
+
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html {

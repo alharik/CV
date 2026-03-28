@@ -1,8 +1,11 @@
-/// WASM bindings for browser-based MP3 → WAV conversion.
+/// WASM bindings for browser-based audio conversion.
+///
+/// Supports: MP3, WAV, FLAC, OGG Vorbis, AAC → WAV output.
 use wasm_bindgen::prelude::*;
 
 use crate::decoder;
 use crate::encoder;
+use crate::processor;
 use crate::types::BitDepth;
 
 /// Initialize panic hook for better error messages in browser console.
@@ -11,22 +14,35 @@ pub fn init() {
     console_error_panic_hook::set_once();
 }
 
+// ─── Legacy API (backwards compatible) ───────────────────────────
+
 /// Convert MP3 bytes to WAV bytes (16-bit PCM).
-///
-/// This is the main entry point for browser-based conversion.
-/// Takes a Uint8Array of MP3 data and returns a Uint8Array of WAV data.
 #[wasm_bindgen(js_name = "convertMp3ToWav")]
 pub fn convert_mp3_to_wav(mp3_data: &[u8]) -> std::result::Result<Vec<u8>, JsValue> {
     convert_mp3_to_wav_with_depth(mp3_data, 16)
 }
 
 /// Convert MP3 bytes to WAV bytes with configurable bit depth.
-///
-/// `bit_depth`: 16 (default), 24, or 32 (float).
 #[wasm_bindgen(js_name = "convertMp3ToWavWithDepth")]
 pub fn convert_mp3_to_wav_with_depth(
     mp3_data: &[u8],
     bit_depth: u8,
+) -> std::result::Result<Vec<u8>, JsValue> {
+    convert_audio_to_wav(mp3_data, bit_depth, 0)
+}
+
+// ─── New v1.1 API ────────────────────────────────────────────────
+
+/// Convert any supported audio format to WAV.
+///
+/// Auto-detects input format (MP3, WAV, FLAC, OGG, AAC).
+/// `bit_depth`: 16, 24, or 32.
+/// `target_sample_rate`: desired output rate in Hz, or 0 to keep original.
+#[wasm_bindgen(js_name = "convertAudioToWav")]
+pub fn convert_audio_to_wav(
+    audio_data: &[u8],
+    bit_depth: u8,
+    target_sample_rate: u32,
 ) -> std::result::Result<Vec<u8>, JsValue> {
     let depth = match bit_depth {
         16 => BitDepth::I16,
@@ -35,23 +51,63 @@ pub fn convert_mp3_to_wav_with_depth(
         _ => return Err(JsValue::from_str("Invalid bit depth: use 16, 24, or 32")),
     };
 
-    let decoded = decoder::decode_mp3(mp3_data)
+    // Decode any supported format
+    let decoded = decoder::decode_audio(audio_data)
         .map_err(|e| JsValue::from_str(&format!("Decode error: {}", e)))?;
 
-    let wav_data = encoder::wav::encode_wav(
-        &decoded.samples,
-        decoded.sample_rate,
-        decoded.channels,
-        depth,
-    )
-    .map_err(|e| JsValue::from_str(&format!("Encode error: {}", e)))?;
+    // Resample if requested
+    let (samples, sample_rate) =
+        if target_sample_rate > 0 && target_sample_rate != decoded.sample_rate {
+            let resampled = processor::resample_audio(
+                &decoded.samples,
+                decoded.channels,
+                decoded.sample_rate,
+                target_sample_rate,
+            )
+            .map_err(|e| JsValue::from_str(&format!("Resample error: {}", e)))?;
+
+            match resampled {
+                Some(data) => (data, target_sample_rate),
+                None => (decoded.samples, decoded.sample_rate),
+            }
+        } else {
+            (decoded.samples, decoded.sample_rate)
+        };
+
+    // Encode to WAV
+    let wav_data = encoder::wav::encode_wav(&samples, sample_rate, decoded.channels, depth)
+        .map_err(|e| JsValue::from_str(&format!("Encode error: {}", e)))?;
 
     Ok(wav_data)
 }
 
-/// Get audio metadata from MP3 bytes without full conversion.
+/// Get audio metadata from any supported format without full conversion.
 ///
-/// Returns a JSON string with sample_rate, channels, duration_secs.
+/// Returns a JSON string with sampleRate, channels, durationSecs, totalSamples, format.
+#[wasm_bindgen(js_name = "getAudioInfo")]
+pub fn get_audio_info(audio_data: &[u8]) -> std::result::Result<String, JsValue> {
+    let decoded = decoder::decode_audio(audio_data)
+        .map_err(|e| JsValue::from_str(&format!("Decode error: {}", e)))?;
+
+    let format = decoded
+        .metadata
+        .format
+        .as_deref()
+        .unwrap_or("unknown");
+
+    let info = format!(
+        r#"{{"sampleRate":{},"channels":{},"durationSecs":{},"totalSamples":{},"format":"{}"}}"#,
+        decoded.sample_rate,
+        decoded.channels,
+        decoded.metadata.duration_secs.unwrap_or(0.0),
+        decoded.samples.len() / decoded.channels as usize,
+        format,
+    );
+
+    Ok(info)
+}
+
+/// Get audio metadata from MP3 bytes (backwards compatible).
 #[wasm_bindgen(js_name = "getMp3Info")]
 pub fn get_mp3_info(mp3_data: &[u8]) -> std::result::Result<String, JsValue> {
     let decoded = decoder::decode_mp3(mp3_data)
@@ -66,6 +122,12 @@ pub fn get_mp3_info(mp3_data: &[u8]) -> std::result::Result<String, JsValue> {
     );
 
     Ok(info)
+}
+
+/// Get list of supported input formats.
+#[wasm_bindgen(js_name = "getSupportedFormats")]
+pub fn get_supported_formats() -> String {
+    r#"["mp3","wav","flac","ogg","aac"]"#.to_string()
 }
 
 /// Get the version of sonic-converter.

@@ -87,6 +87,8 @@ pub struct AudioMetadata {
     pub bitrate_kbps: Option<u32>,
     /// Whether the source is VBR.
     pub is_vbr: Option<bool>,
+    /// Detected source format (e.g., "mp3", "flac", "wav", "ogg", "aac").
+    pub format: Option<String>,
 }
 
 /// Result of a completed conversion.

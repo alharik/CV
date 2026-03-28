@@ -14,12 +14,14 @@ pub mod decoder;
 pub mod encoder;
 pub mod error;
 pub mod pipeline;
+pub mod processor;
 pub mod types;
 
 #[cfg(feature = "wasm")]
 pub mod wasm;
 
 pub use error::{Result, SonicError};
+pub use processor::resample_audio;
 pub use types::{AudioMetadata, BitDepth, Channels, ConversionResult, Progress};
 
 use std::fs;
