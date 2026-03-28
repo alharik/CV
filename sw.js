@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mp3towav-v3';
+const CACHE_NAME = 'mp3towav-v4';
 
 const PRECACHE_URLS = [
     '/',

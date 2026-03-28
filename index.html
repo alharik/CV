@@ -34,7 +34,7 @@
     <noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" crossorigin></noscript>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css?v=1.1.1">
+    <link rel="stylesheet" href="style.css?v=1.2.0">
 
     <!-- Plausible Analytics -->
     <script defer data-domain="mp3towav.online" src="https://plausible.io/js/script.js"></script>
@@ -172,31 +172,38 @@
         <section class="converter">
             <div class="container">
                 <!-- Conversion Tool Cards -->
-                <div class="tool-cards" id="toolCards">
-                    <button type="button" class="tool-card active" data-accept=".mp3,audio/mpeg" data-label="MP3 to WAV">
-                        <span class="tool-from">MP3</span>
-                        <span class="tool-arrow">&rarr;</span>
-                        <span class="tool-to">WAV</span>
-                    </button>
-                    <button type="button" class="tool-card" data-accept=".flac,audio/flac" data-label="FLAC to WAV">
-                        <span class="tool-from">FLAC</span>
-                        <span class="tool-arrow">&rarr;</span>
-                        <span class="tool-to">WAV</span>
-                    </button>
-                    <button type="button" class="tool-card" data-accept=".ogg,audio/ogg" data-label="OGG to WAV">
-                        <span class="tool-from">OGG</span>
-                        <span class="tool-arrow">&rarr;</span>
-                        <span class="tool-to">WAV</span>
-                    </button>
-                    <button type="button" class="tool-card" data-accept=".aac,.m4a,audio/aac,audio/mp4" data-label="AAC to WAV">
-                        <span class="tool-from">AAC</span>
-                        <span class="tool-arrow">&rarr;</span>
-                        <span class="tool-to">WAV</span>
-                    </button>
-                    <button type="button" class="tool-card" data-accept=".mp3,.wav,.flac,.ogg,.aac,.m4a,audio/*" data-label="All formats">
-                        <span class="tool-from">ALL</span>
-                        <span class="tool-arrow">&rarr;</span>
-                        <span class="tool-to">WAV</span>
+                <div class="tool-cards-wrapper">
+                    <div class="tool-cards" id="toolCards">
+                        <button type="button" class="tool-card active" data-accept=".mp3,audio/mpeg" data-label="MP3 to WAV" data-from="mp3" data-to="wav" data-reverse-accept=".wav,audio/wav" data-reverse-output="mp3" data-coming-soon="true">
+                            <span class="tool-from">MP3</span>
+                            <span class="tool-arrow">&rarr;</span>
+                            <span class="tool-to">WAV</span>
+                        </button>
+                        <button type="button" class="tool-card" data-accept=".flac,audio/flac" data-label="FLAC to WAV" data-from="flac" data-to="wav" data-reverse-accept=".wav,audio/wav" data-reverse-output="flac" data-coming-soon="false">
+                            <span class="tool-from">FLAC</span>
+                            <span class="tool-arrow">&rarr;</span>
+                            <span class="tool-to">WAV</span>
+                        </button>
+                        <button type="button" class="tool-card" data-accept=".ogg,audio/ogg" data-label="OGG to WAV" data-from="ogg" data-to="wav" data-reverse-accept=".wav,audio/wav" data-reverse-output="ogg" data-coming-soon="true">
+                            <span class="tool-from">OGG</span>
+                            <span class="tool-arrow">&rarr;</span>
+                            <span class="tool-to">WAV</span>
+                        </button>
+                        <button type="button" class="tool-card" data-accept=".aac,.m4a,audio/aac,audio/mp4" data-label="AAC to WAV" data-from="aac" data-to="wav" data-reverse-accept=".wav,audio/wav" data-reverse-output="aac" data-coming-soon="true">
+                            <span class="tool-from">AAC</span>
+                            <span class="tool-arrow">&rarr;</span>
+                            <span class="tool-to">WAV</span>
+                        </button>
+                        <button type="button" class="tool-card" data-accept=".mp3,.wav,.flac,.ogg,.aac,.m4a,audio/*" data-label="All formats" data-from="all" data-to="wav" data-reverse-accept=".wav,audio/wav" data-reverse-output="all" data-coming-soon="true">
+                            <span class="tool-from">ALL</span>
+                            <span class="tool-arrow">&rarr;</span>
+                            <span class="tool-to">WAV</span>
+                        </button>
+                    </div>
+                    <button type="button" class="swap-btn" id="swapDirection" title="Swap conversion direction">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/>
+                        </svg>
                     </button>
                 </div>
 
@@ -514,7 +521,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/jszip@3/dist/jszip.min.js" defer></script>
-    <script defer src="app.js?v=1.1.2"></script>
+    <script defer src="app.js?v=1.2.0"></script>
     <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {

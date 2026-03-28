@@ -1,6 +1,6 @@
 [package]
 name = "sonic-converter"
-version = "1.1.0"
+version = "1.2.0"
 edition = "2021"
 authors = ["James Waynn"]
 description = "Production-grade audio converter — MP3, WAV, FLAC, OGG, AAC to WAV with resampling"
