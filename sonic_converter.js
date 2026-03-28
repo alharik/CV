@@ -117,6 +117,37 @@ export function convertWavToFlac(audio_data, bit_depth, target_sample_rate) {
 }
 
 /**
+ * Convert WAV (or any supported input) to OGG (Ogg FLAC container).
+ *
+ * Produces Ogg FLAC files — lossless audio in the OGG container.
+ * Supported by VLC, ffmpeg, Audacity, and most audio software.
+ * @param {Uint8Array} audio_data
+ * @param {number} bit_depth
+ * @param {number} target_sample_rate
+ * @returns {Uint8Array}
+ */
+export function convertWavToOgg(audio_data, bit_depth, target_sample_rate) {
+    try {
+        const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+        const ptr0 = passArray8ToWasm0(audio_data, wasm.__wbindgen_export2);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.convertWavToOgg(retptr, ptr0, len0, bit_depth, target_sample_rate);
+        var r0 = getDataViewMemory0().getInt32(retptr + 4 * 0, true);
+        var r1 = getDataViewMemory0().getInt32(retptr + 4 * 1, true);
+        var r2 = getDataViewMemory0().getInt32(retptr + 4 * 2, true);
+        var r3 = getDataViewMemory0().getInt32(retptr + 4 * 3, true);
+        if (r3) {
+            throw takeObject(r2);
+        }
+        var v2 = getArrayU8FromWasm0(r0, r1).slice();
+        wasm.__wbindgen_export(r0, r1 * 1, 1);
+        return v2;
+    } finally {
+        wasm.__wbindgen_add_to_stack_pointer(16);
+    }
+}
+
+/**
  * Get audio metadata from any supported format without full conversion.
  *
  * Returns a JSON string with sampleRate, channels, durationSecs, totalSamples, format.

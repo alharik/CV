@@ -42,6 +42,9 @@ symphonia-metadata = "0.5"
 # Audio processing: resampling
 rubato = "0.16"
 
+# Encoding: OGG container (pure Rust)
+ogg = "0.9"
+
 # Error handling
 thiserror = "2"
 

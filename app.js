@@ -66,22 +66,33 @@ function isSupportedAudio(file) {
     return SUPPORTED_EXTENSIONS.some(ext => name.endsWith(ext)) || SUPPORTED_MIMES.includes(file.type);
 }
 
+// Output format helpers — determined by active card + conversion direction
+function getActiveFormat() {
+    const card = document.querySelector('.tool-card.active');
+    return card ? card.dataset.format : 'mp3';
+}
+
 function getOutputName(fileName) {
     if (conversionMode === 'from-wav') {
-        const activeCard = document.querySelector('.tool-card.active');
-        const outputFmt = activeCard ? activeCard.dataset.reverseOutput : 'wav';
-        if (outputFmt && outputFmt !== 'all') {
-            return fileName.replace(/\.(mp3|flac|ogg|aac|m4a|wav)$/i, '.' + outputFmt);
-        }
+        return fileName.replace(/\.(mp3|flac|ogg|aac|m4a|wav)$/i, '.' + getActiveFormat());
     }
     return fileName.replace(/\.(mp3|flac|ogg|aac|m4a|wav)$/i, '.wav');
 }
 
+const MIME_MAP = { wav: 'audio/wav', flac: 'audio/flac', mp3: 'audio/mpeg', ogg: 'audio/ogg', aac: 'audio/aac' };
+
+// Dispatcher for WAV → target format conversion
+function convertFromWav(wasm, audioBytes, fmt, bitDepth, sampleRate) {
+    switch (fmt) {
+        case 'flac': return wasm.convertWavToFlac(audioBytes, bitDepth, sampleRate);
+        case 'ogg':  return wasm.convertWavToOgg(audioBytes, bitDepth, sampleRate);
+        default: throw new Error('WAV \u2192 ' + fmt.toUpperCase() + ' encoder not available yet. Try FLAC or OGG.');
+    }
+}
+
 function getOutputMimeType() {
     if (conversionMode === 'from-wav') {
-        const activeCard = document.querySelector('.tool-card.active');
-        const outputFmt = activeCard ? activeCard.dataset.reverseOutput : 'wav';
-        if (outputFmt === 'flac') return 'audio/flac';
+        return MIME_MAP[getActiveFormat()] || 'audio/wav';
     }
     return 'audio/wav';
 }
@@ -105,6 +116,7 @@ window.addEventListener('load', () => {
             console.warn('WASM init failed, will use Web Audio API fallback:', err.message);
         }
         if (dropLimit) dropLimit.textContent = 'Audio files up to 100 MB';
+        refreshUI();
         wasmInitResolve();
     })();
 });
@@ -271,91 +283,68 @@ bitDepthSelector.addEventListener('click', (e) => {
     selectedBitDepth = parseInt(btn.dataset.depth, 10);
 });
 
-// --- Tool Cards ---
+// --- Tool Cards + Conversion Header ---
 const toolCards = document.getElementById('toolCards');
 const swapDirection = document.getElementById('swapDirection');
+const convSource = document.getElementById('convSource');
+const convTarget = document.getElementById('convTarget');
 
-if (toolCards) {
-    toolCards.addEventListener('click', (e) => {
-        const card = e.target.closest('.tool-card');
-        if (!card) return;
-        // In from-wav mode, skip coming-soon cards
-        if (conversionMode === 'from-wav' && card.classList.contains('coming-soon')) return;
-        toolCards.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        // Update file input accept attribute based on mode
-        if (conversionMode === 'from-wav') {
-            fileInput.setAttribute('accept', '.wav,audio/wav');
-        } else {
-            const accept = card.dataset.accept;
-            if (accept) fileInput.setAttribute('accept', accept);
-        }
-        // Update drop zone text
-        updateDropText(card);
-    });
+
+function updateConversionHeader() {
+    if (!convSource || !convTarget) return;
+    const fmt = getActiveFormat().toUpperCase();
+    if (conversionMode === 'from-wav') {
+        convSource.textContent = 'WAV';
+        convTarget.textContent = fmt;
+    } else {
+        convSource.textContent = fmt;
+        convTarget.textContent = 'WAV';
+    }
 }
 
-function updateDropText(card) {
+function updateFileAccept() {
+    if (conversionMode === 'from-wav') {
+        fileInput.setAttribute('accept', '.wav,audio/wav');
+    } else {
+        const card = document.querySelector('.tool-card.active');
+        if (card) fileInput.setAttribute('accept', card.dataset.accept);
+    }
+}
+
+function updateDropText() {
     const dropText = document.querySelector('.drop-text');
     if (!dropText) return;
     if (conversionMode === 'from-wav') {
         dropText.textContent = 'Drop your WAV files here';
     } else {
-        const label = card ? (card.dataset.label || 'audio files') : 'audio files';
-        dropText.textContent = 'Drop your ' + label.split(' to ')[0] + ' files here';
+        dropText.textContent = 'Drop your ' + getActiveFormat().toUpperCase() + ' files here';
     }
 }
 
-function applySwapDirection() {
-    const cards = toolCards.querySelectorAll('.tool-card');
-    const reversed = conversionMode === 'from-wav';
+function refreshUI() {
+    updateConversionHeader();
+    updateFileAccept();
+    updateDropText();
+}
 
-    toolCards.classList.toggle('reversed', reversed);
-    swapDirection.classList.toggle('active', reversed);
-
-    cards.forEach(card => {
-        const fromEl = card.querySelector('.tool-from');
-        const toEl = card.querySelector('.tool-to');
-        if (reversed) {
-            fromEl.textContent = 'WAV';
-            toEl.textContent = (card.dataset.from || '').toUpperCase();
-            // Show coming-soon state for unsupported reverse conversions
-            if (card.dataset.comingSoon === 'true') {
-                card.classList.add('coming-soon');
-            }
-        } else {
-            fromEl.textContent = (card.dataset.from || '').toUpperCase();
-            toEl.textContent = 'WAV';
-            card.classList.remove('coming-soon');
-        }
+// Card click handler (delegated)
+if (toolCards) {
+    toolCards.addEventListener('click', (e) => {
+        const card = e.target.closest('.tool-card');
+        if (!card) return;
+        toolCards.querySelectorAll('.tool-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        updateConversionHeader();
+        updateFileAccept();
+        updateDropText();
     });
-
-    // Update file input accept
-    if (reversed) {
-        fileInput.setAttribute('accept', '.wav,audio/wav');
-    } else {
-        const activeCard = toolCards.querySelector('.tool-card.active');
-        if (activeCard) fileInput.setAttribute('accept', activeCard.dataset.accept);
-    }
-
-    // If active card is now coming-soon, switch to FLAC card
-    const activeCard = toolCards.querySelector('.tool-card.active');
-    if (reversed && activeCard && activeCard.classList.contains('coming-soon')) {
-        const flacCard = toolCards.querySelector('[data-from="flac"]');
-        if (flacCard) {
-            cards.forEach(c => c.classList.remove('active'));
-            flacCard.classList.add('active');
-        }
-    }
-
-    // Update drop text
-    updateDropText(toolCards.querySelector('.tool-card.active'));
 }
 
+// Swap direction
 if (swapDirection) {
     swapDirection.addEventListener('click', () => {
         conversionMode = conversionMode === 'to-wav' ? 'from-wav' : 'to-wav';
-        applySwapDirection();
+        refreshUI();
     });
 }
 
@@ -671,13 +660,8 @@ async function convertFile(file) {
 
             let resultBytes;
             if (conversionMode === 'from-wav') {
-                const activeCard = document.querySelector('.tool-card.active');
-                const outputFmt = activeCard ? activeCard.dataset.reverseOutput : null;
-                if (outputFmt === 'flac') {
-                    resultBytes = wasmModule.convertWavToFlac(audioBytes, selectedBitDepth, selectedSampleRate);
-                } else {
-                    throw new Error('WAV \u2192 ' + (outputFmt || 'unknown').toUpperCase() + ' coming soon. Use FLAC for now.');
-                }
+                const fmt = getActiveFormat();
+                resultBytes = convertFromWav(wasmModule, audioBytes, fmt, selectedBitDepth, selectedSampleRate);
             } else {
                 resultBytes = wasmModule.convertAudioToWav(audioBytes, selectedBitDepth, selectedSampleRate);
             }
@@ -803,13 +787,8 @@ async function handleBatch(files) {
             if (wasmReady) {
                 let resultBytes;
                 if (conversionMode === 'from-wav') {
-                    const activeCard = document.querySelector('.tool-card.active');
-                    const outputFmt = activeCard ? activeCard.dataset.reverseOutput : null;
-                    if (outputFmt === 'flac') {
-                        resultBytes = wasmModule.convertWavToFlac(audioBytes, selectedBitDepth, selectedSampleRate);
-                    } else {
-                        throw new Error('WAV \u2192 ' + (outputFmt || 'unknown').toUpperCase() + ' coming soon.');
-                    }
+                    const fmt = getActiveFormat();
+                    resultBytes = convertFromWav(wasmModule, audioBytes, fmt, selectedBitDepth, selectedSampleRate);
                 } else {
                     resultBytes = wasmModule.convertAudioToWav(audioBytes, selectedBitDepth, selectedSampleRate);
                 }

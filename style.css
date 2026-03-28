@@ -1323,27 +1323,73 @@ footer p {
     color: var(--primary-hover);
 }
 
-/* ---- Tool Cards ---- */
-.tool-cards-wrapper {
+/* ---- Conversion Header ---- */
+.conversion-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    margin-bottom: 1rem;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
 }
 
+.conv-format {
+    font-family: var(--font-mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    min-width: 3.5rem;
+    text-align: center;
+}
+
+.conv-source {
+    color: var(--primary);
+}
+
+.conv-target {
+    color: var(--text);
+}
+
+.conv-swap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s;
+    flex-shrink: 0;
+}
+
+.conv-swap:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--primary-glow);
+    transform: rotate(180deg);
+}
+
+.conv-swap:active {
+    transform: rotate(180deg) scale(0.92);
+}
+
+.conv-swap svg {
+    transition: none;
+}
+
+/* ---- Tool Cards ---- */
 .tool-cards {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
 }
 
 .tool-card {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.5rem 0.9rem;
+    padding: 0.4rem 1rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -1351,9 +1397,8 @@ footer p {
     transition: all 0.2s;
     font-family: var(--font-mono);
     font-size: 0.8rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-secondary);
-    position: relative;
 }
 
 .tool-card:hover {
@@ -1365,90 +1410,8 @@ footer p {
 .tool-card.active {
     border-color: var(--primary);
     background: var(--primary-glow);
-    color: var(--text);
+    color: var(--primary);
     box-shadow: 0 0 12px var(--primary-glow);
-}
-
-.tool-card.coming-soon {
-    opacity: 0.45;
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-.tool-card.coming-soon::after {
-    content: 'Soon';
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    background: var(--primary);
-    color: #fff;
-    font-size: 0.55rem;
-    font-weight: 700;
-    padding: 1px 5px;
-    border-radius: 6px;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-}
-
-.tool-from {
-    font-weight: 600;
-    color: var(--primary);
-    transition: opacity 0.2s;
-}
-
-.tool-card.active .tool-from {
-    color: var(--primary-hover);
-}
-
-.tool-arrow {
-    color: var(--text-muted);
-    font-size: 0.75rem;
-    transition: transform 0.3s;
-}
-
-.tool-cards.reversed .tool-arrow {
-    transform: scaleX(-1);
-}
-
-.tool-to {
-    font-weight: 600;
-    transition: opacity 0.2s;
-}
-
-/* Swap direction button */
-.swap-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all 0.2s;
-    flex-shrink: 0;
-}
-
-.swap-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: var(--surface-2);
-}
-
-.swap-btn.active {
-    border-color: var(--primary);
-    background: var(--primary-glow);
-    color: var(--primary);
-}
-
-.swap-btn svg {
-    transition: transform 0.3s;
-}
-
-.swap-btn.active svg {
-    transform: rotate(180deg);
 }
 
 /* ---- Light Theme ---- */
@@ -1707,12 +1670,25 @@ footer p {
         gap: 0.4rem;
     }
 
+    .conversion-header {
+        gap: 0.6rem;
+    }
+
+    .conv-format {
+        font-size: 1.2rem;
+    }
+
+    .conv-swap {
+        width: 36px;
+        height: 36px;
+    }
+
     .tool-cards {
         gap: 0.35rem;
     }
 
     .tool-card {
-        padding: 0.4rem 0.65rem;
+        padding: 0.35rem 0.7rem;
         font-size: 0.7rem;
     }
 }

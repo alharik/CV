@@ -174,6 +174,51 @@ pub fn convert_wav_to_flac(
     Ok(flac_data)
 }
 
+/// Convert WAV (or any supported input) to OGG (Ogg FLAC container).
+///
+/// Produces Ogg FLAC files — lossless audio in the OGG container.
+/// Supported by VLC, ffmpeg, Audacity, and most audio software.
+#[wasm_bindgen(js_name = "convertWavToOgg")]
+pub fn convert_wav_to_ogg(
+    audio_data: &[u8],
+    bit_depth: u8,
+    target_sample_rate: u32,
+) -> std::result::Result<Vec<u8>, JsValue> {
+    let depth = match bit_depth {
+        16 => BitDepth::I16,
+        24 => BitDepth::I24,
+        32 => BitDepth::F32,
+        _ => return Err(JsValue::from_str("Invalid bit depth: use 16, 24, or 32")),
+    };
+
+    let decoded = decoder::decode_audio(audio_data)
+        .map_err(|e| JsValue::from_str(&format!("Decode error: {}", e)))?;
+
+    let (samples, sample_rate) =
+        if target_sample_rate > 0 && target_sample_rate != decoded.sample_rate {
+            let resampled = processor::resample_audio(
+                &decoded.samples,
+                decoded.channels,
+                decoded.sample_rate,
+                target_sample_rate,
+            )
+            .map_err(|e| JsValue::from_str(&format!("Resample error: {}", e)))?;
+
+            match resampled {
+                Some(data) => (data, target_sample_rate),
+                None => (decoded.samples, decoded.sample_rate),
+            }
+        } else {
+            (decoded.samples, decoded.sample_rate)
+        };
+
+    let ogg_data =
+        crate::encoder::ogg::encode_ogg(&samples, sample_rate, decoded.channels, depth)
+            .map_err(|e| JsValue::from_str(&format!("OGG encode error: {}", e)))?;
+
+    Ok(ogg_data)
+}
+
 /// Get list of supported input formats.
 #[wasm_bindgen(js_name = "getSupportedFormats")]
 pub fn get_supported_formats() -> String {
@@ -183,7 +228,7 @@ pub fn get_supported_formats() -> String {
 /// Get list of supported output formats.
 #[wasm_bindgen(js_name = "getSupportedOutputFormats")]
 pub fn get_supported_output_formats() -> String {
-    r#"["wav","flac"]"#.to_string()
+    r#"["wav","flac","ogg"]"#.to_string()
 }
 
 /// Get the version of sonic-converter.
